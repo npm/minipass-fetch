@@ -32,5 +32,15 @@
   },
   "optionalDependencies": {
     "encoding": "^0.1.12"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/npm/minipass-fetch.git"
+  },
+  "keywords": [
+    "fetch",
+    "minipass",
+    "node-fetch",
+    "window.fetch"
+  ]
 }
