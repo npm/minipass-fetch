@@ -43,5 +43,9 @@
     "minipass",
     "node-fetch",
     "window.fetch"
+  ],
+  "files": [
+    "index.js",
+    "lib/*.js"
   ]
 }
