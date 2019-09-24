@@ -12,6 +12,7 @@
     "postpublish": "git push origin --follow-tags"
   },
   "tap": {
+    "coverage-map": "map.js",
     "check-coverage": true
   },
   "devDependencies": {
@@ -25,9 +26,9 @@
     "whatwg-url": "^7.0.0"
   },
   "dependencies": {
-    "minipass": "^2.8.2",
+    "minipass": "^2.8.4",
     "minipass-pipeline": "^1.2.0",
-    "minipass-sized": "^1.0.1",
+    "minipass-sized": "^1.0.2",
     "minizlib": "^1.2.2"
   },
   "optionalDependencies": {
