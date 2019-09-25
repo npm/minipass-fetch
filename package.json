@@ -26,7 +26,7 @@
     "whatwg-url": "^7.0.0"
   },
   "dependencies": {
-    "minipass": "^2.8.6",
+    "minipass": "^2.9.0",
     "minipass-pipeline": "^1.2.0",
     "minipass-sized": "^1.0.2",
     "minizlib": "^1.2.2"
