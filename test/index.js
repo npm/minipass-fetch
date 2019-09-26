@@ -490,24 +490,20 @@ t.test('decompress deflate raw response from old apache server', t =>
     return res.text().then(result => t.equal(result, 'hello world'))
   }))
 
-t.test('decompress brotli response', {
-  todo: typeof zlib.BrotliDecompress !== 'function'
-    ? 'Add brotli support to minizlib' : false
-}, t => fetch(url).then(res => {
-  t.equal(res.headers.get('content-type'), 'text/plain')
-  return res.text().then(result => t.equal(result, 'hello world'))
-}))
+t.test('decompress brotli response', t =>
+  fetch(`${base}brotli`).then(res => {
+    t.equal(res.headers.get('content-type'), 'text/plain')
+    return res.text().then(result => t.equal(result, 'hello world'))
+  }))
 
-t.test('handle no content response with brotli encoding', {
-  todo: typeof zlib.BrotliDecompress !== 'function'
-  ? 'Add brotli support to minizlib' : false
-}, t => fetch(`${base}no-content/brotli`).then(res => {
-  t.equal(res.status, 204)
-  t.equal(res.statusText, 'No Content')
-  t.equal(res.headers.get('content-encoding'), 'br')
-  t.equal(res.ok, true)
-  return res.text().then(result => t.equal(result, 'string'))
-}))
+t.test('handle no content response with brotli encoding', t =>
+  fetch(`${base}no-content/brotli`).then(res => {
+    t.equal(res.status, 204)
+    t.equal(res.statusText, 'No Content')
+    t.equal(res.headers.get('content-encoding'), 'br')
+    t.equal(res.ok, true)
+    return res.text().then(result => t.equal(result, ''))
+  }))
 
 t.test('skip decompression if unsupported', t =>
   fetch(`${base}sdch`).then(res => {
