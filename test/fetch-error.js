@@ -14,6 +14,8 @@ t.test('no underlying error', t => {
   })
   fe.name = 'fooblz'
   t.equal(fe.name, 'FetchError', 'cannot override name')
+  t.equal(Object.prototype.toString.call(fe), '[object FetchError]', 'sets toStringTag')
+  t.equal(String(fe), 'FetchError: foo', 'name shows up in toString')
   t.end()
 })
 
