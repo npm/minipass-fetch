@@ -1317,6 +1317,17 @@ t.test('reject decoding body twice', t => {
   })
 })
 
+t.test('response trailers', t =>
+  fetch(`${base}trailers`).then(res => {
+    t.equal(res.status, 200)
+    t.equal(res.statusText, 'OK')
+    t.equal(res.headers.get('Trailer'), 'X-Node-Fetch')
+    return res.trailer.then(trailers => {
+      t.same(Array.from(trailers.keys()), ['x-node-fetch'])
+      t.equal(trailers.get('x-node-fetch'), 'hello world!')
+    })
+  }))
+
 t.test('maximum response size, multiple chunk', t => {
   const url = `${base}size/chunk`
   const opts = {

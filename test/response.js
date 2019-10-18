@@ -154,3 +154,16 @@ t.test('should default to empty string as url', t => {
   t.equal(res.url, '')
   t.end()
 })
+
+t.test('trailers in response option', t => {
+  const Headers = require('../lib/headers.js')
+  const res = new Response(null, {
+    trailer: Headers.createHeadersLenient({
+      'X-Node-Fetch': 'hello world!'
+    })
+  })
+  return res.trailer.then(trailers => {
+    t.same(Array.from(trailers.keys()), ['x-node-fetch'])
+    t.equal(trailers.get('x-node-fetch'), 'hello world!')
+  })
+})
