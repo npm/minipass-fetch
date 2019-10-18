@@ -307,6 +307,13 @@ t.test('convert body', t => {
     t.equal(await b.textConverted(), s)
   })
 
+  t.test('html4 meta tag reversed', async t => {
+    const s = '<meta content="text/html; charset=gbk" http-equiv="Content-Type"><div>中文L</div>'
+    const b = new Body(convert(s, 'gbk'))
+    t.equal(await b.textConverted(), s)
+  })
+
+
   t.test('html5 meta tag', async t => {
     const s = '<meta charset="gbk"><div>中文</div>'
     const b = new Body(convert(s, 'gbk'))

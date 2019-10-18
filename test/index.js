@@ -1767,6 +1767,14 @@ t.test('with optional `encoding`', t => {
       })
     }))
 
+  t.test('encoding decode, html4 detect reverse http-equiv', t =>
+    fetch(`${base}encoding/gb2312-reverse`).then(res => {
+      t.equal(res.status, 200)
+      return res.textConverted().then(result => {
+        t.equal(result, '<meta content="text/html; charset=gb2312" http-equiv="Content-Type"><div>中文</div>')
+      })
+    }))
+
   t.test('default to utf8 encoding', t =>
     fetch(`${base}encoding/utf8`).then(res => {
       t.equal(res.status, 200)
