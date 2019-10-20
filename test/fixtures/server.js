@@ -9,7 +9,7 @@ try { convert = require('encoding').convert; } catch(e) {}
 
 class TestServer {
   constructor () {
-    this.server = http.createServer(this.router)
+    this.server = http.createServer((req, res) => this.router(req, res))
     this.port = 30000 + (+process.env.TAP_CHILD_ID || 1)
     this.hostname = 'localhost'
     // node 8 default keepalive timeout is 5000ms
@@ -365,6 +365,14 @@ class TestServer {
       res.write('Body of the response')
       res.addTrailers({ 'X-Node-Fetch': 'hello world!' })
       res.end()
+    }
+
+    if (p === '/host-redirect') {
+      if (req.headers.host !== `localhost:${this.port}`) {
+        res.setHeader('location', `http://localhost:${this.port}/host-redirect`)
+        res.statusCode = 302
+      }
+      res.end(`http://${req.headers.host}/host-redirect`)
     }
   }
 }

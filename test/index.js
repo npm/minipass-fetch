@@ -1855,3 +1855,11 @@ t.test('data uri', t => {
 
   t.end()
 })
+
+t.test('redirect changes host header', t =>
+  fetch(`http://127.0.0.1:${local.port}/host-redirect`, {
+    redirect: 'follow',
+    headers: { host: 'foo' },
+  })
+  .then(r => r.text())
+  .then(text => t.equal(text, `${base}host-redirect`)))
