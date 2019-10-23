@@ -4,7 +4,7 @@ const zlib = require('minizlib')
 const Minipass = require('minipass')
 const { multipart: Multipart } = require('parted')
 
-let convert;
+let convert
 try { convert = require('encoding').convert; } catch(e) {}
 
 class TestServer {
@@ -91,14 +91,14 @@ class TestServer {
       } else {
         res.statusCode = 200
         res.setHeader('Content-Type', 'text/plain')
-        res.setHeader('Content-Encoding', 'br');
+        res.setHeader('Content-Encoding', 'br')
         new zlib.BrotliCompress().end('hello world').concat().then(buf => res.end(buf))
       }
     }
 
 
     if (p === '/deflate-raw') {
-      res.statusCode = 200;
+      res.statusCode = 200
       res.setHeader('Content-Type', 'text/plain')
       res.setHeader('Content-Encoding', 'deflate')
       new zlib.DeflateRaw().end('hello world').concat().then(buf => res.end(buf))
@@ -127,8 +127,8 @@ class TestServer {
     }
 
     if (p === '/slow') {
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'text/plain');
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'text/plain')
       res.write('test')
       setTimeout(() => res.end('test'), 1000)
     }
@@ -165,9 +165,9 @@ class TestServer {
     }
 
     if (p === '/encoding/gb2312-reverse') {
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'text/html');
-      res.end(convert('<meta content="text/html; charset=gb2312" http-equiv="Content-Type"><div>中文</div>', 'gb2312'));
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'text/html')
+      res.end(convert('<meta content="text/html; charset=gb2312" http-equiv="Content-Type"><div>中文</div>', 'gb2312'))
     }
 
     if (p === '/encoding/shift-jis') {
@@ -269,7 +269,7 @@ class TestServer {
     }
 
     if (p === '/redirect/slow-stream') {
-      res.statusCode = 301;
+      res.statusCode = 301
       res.setHeader('Location', '/slow')
       res.end()
     }
