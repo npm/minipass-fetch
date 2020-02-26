@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "minipass": "^3.1.0",
-    "minipass-pipeline": "^1.2.2",
     "minipass-sized": "^1.0.3",
     "minizlib": "^2.0.0"
   },
