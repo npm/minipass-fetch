@@ -28,7 +28,8 @@
   "dependencies": {
     "minipass": "^3.1.0",
     "minipass-sized": "^1.0.3",
-    "minizlib": "^2.0.0"
+    "minizlib": "^2.0.0",
+    "encoding": "^0.1.12"
   },
   "optionalDependencies": {
     "encoding": "^0.1.12"
