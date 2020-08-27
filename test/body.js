@@ -162,6 +162,8 @@ t.test('simulated buffer creation problem', async t => {
 t.test('stream body too slow', async t => {
   const b = new Body(new Minipass(), { timeout: 1 })
   b.url = 'sloowwwwww'
+  // keep the process open, like the actual HTTP channel would
+  setTimeout(() => {}, 10)
   await t.rejects(b.text(), {
     name: 'FetchError',
     message: 'Response timeout while trying to fetch sloowwwwww (over 1ms)',
