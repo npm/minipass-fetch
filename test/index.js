@@ -55,7 +55,6 @@ t.Test.prototype.addAssert('notContain', 2, function (list, key, m, e) {
   return this.notOk(list.indexOf(key) !== -1, m, e)
 })
 
-
 const streamToPromise = (stream, dataHandler) =>
   new Promise((resolve, reject) => {
     stream.on('data', (...args) =>
@@ -1863,3 +1862,31 @@ t.test('redirect changes host header', t =>
   })
   .then(r => r.text())
   .then(text => t.equal(text, `${base}host-redirect`)))
+
+t.test('never apply backpressure to the underlying response stream', t => {
+  const http = require('http')
+  const { request } = http
+  t.teardown(() => http.request = request)
+  http.request = (...args) => {
+    const req = request(...args)
+    const { emit } = req
+    req.emit = (ev, ...args) => {
+      if (ev === 'response') {
+        const res = args[0]
+        res.pause = () => {
+          throw new Error('should not pause the response')
+        }
+      }
+      return emit.call(req, ev, ...args)
+    }
+    return req
+  }
+
+  const dest = new Minipass()
+  return fetch(`${base}hello`)
+    .then(res => {
+      // read it a bit later, so we'll see if any backpressure happens.
+      setTimeout(() => dest.read())
+      return res.body.pipe(dest).promise()
+    })
+})
