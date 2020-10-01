@@ -26,10 +26,10 @@
     "whatwg-url": "^7.0.0"
   },
   "dependencies": {
+    "encoding": "^0.1.12",
     "minipass": "^3.1.0",
     "minipass-sized": "^1.0.3",
-    "minizlib": "^2.0.0",
-    "encoding": "^0.1.12"
+    "minizlib": "^2.0.0"
   },
   "optionalDependencies": {
     "encoding": "^0.1.12"
