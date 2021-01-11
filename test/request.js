@@ -62,6 +62,7 @@ t.test('should support wrapping Request instance', t => {
     follow: 1,
     body: form,
     signal,
+    rejectUnauthorized: false,
   })
   const r2 = new Request(r1, {
     follow: 2
@@ -76,6 +77,7 @@ t.test('should support wrapping Request instance', t => {
   t.equal(r2.follow, 2)
   t.equal(r1.counter, 0)
   t.equal(r2.counter, 0)
+  t.same(Request.getNodeRequestOptions(r1), Request.getNodeRequestOptions(r2))
   t.end()
 })
 
