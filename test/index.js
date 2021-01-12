@@ -699,7 +699,7 @@ t.test('allow redirects to be aborted', t => {
   return t.rejects(fetch(request), { name: 'AbortError' })
 })
 
-t.test('llow redirected response body to be aborted', t => {
+t.test('allow redirected response body to be aborted', t => {
   const abortController = new AbortController()
   const request = new Request(`${base}redirect/slow-stream`, {
     signal: abortController.signal
