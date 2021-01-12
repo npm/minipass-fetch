@@ -600,12 +600,15 @@ t.test('clear internal timeout on fetch redirect', {timeout: 2000}, t => {
 
 t.test('clear internal timeout on fetch error', { timeout: 2000 }, t => {
   const args = ['-e', `require('./')('${base}error/reset', { timeout: 10000 })`]
+  // note: promise rejections started setting exit status code in node 15
+  const stderr = []
   spawn(process.execPath, args, { cwd: path.resolve(__dirname, '..') })
     .on('close', (code, signal) => {
-      t.equal(code, 0)
+      t.match(Buffer.concat(stderr).toString(), 'FetchError')
       t.equal(signal, null)
       t.end()
     })
+    .stderr.on('data', c => stderr.push(c))
 })
 
 t.test('request cancellation with signal', { timeout: 500 }, t => {
@@ -663,12 +666,15 @@ require('./')(
 )
 setTimeout(function () { controller.abort(); }, 20)
   `
+  // note: promise rejections started setting exit status code in node 15
+  const stderr = []
   spawn('node', ['-e', script], { cwd: path.resolve(__dirname, '..') })
     .on('close', (code, signal) => {
-      t.equal(code, 0)
+      t.match(Buffer.concat(stderr).toString(), 'AbortError')
       t.equal(signal, null)
       t.end()
     })
+    .stderr.on('data', c => stderr.push(c))
 })
 
 t.test('remove internal AbortSignal listener when request aborted', t => {
@@ -743,7 +749,7 @@ t.test('raise AbortError when aborted before stream is closed', t => {
   const controller = new AbortController()
   fetch(`${base}slow`, { signal: controller.signal })
     .then(res => {
-      res.body.on('error', (err) => {
+      res.body.once('error', (err) => {
         t.match(err, { name: 'AbortError', code: 'FETCH_ABORT' })
         t.end()
       })
