@@ -231,6 +231,20 @@ t.test('json', async t => {
   })
 })
 
+t.test('handles environments where setTimeout does not have unref', async t => {
+  const originalSetTimeout = setTimeout
+  // simulate environments without unref()
+  global.setTimeout = (func, time) =>
+    Object.assign(originalSetTimeout(func, time), { unref: null })
+  t.teardown(() => global.setTimeout = originalSetTimeout)
+
+  t.doesNotThrow(async () => {
+    const b = new Body(new Blob('a=1'), { timeout: 100 })
+    await b.text()
+    t.end()
+  })
+})
+
 t.test('write to streams', async t => {
   const w = body => Body.writeToStream(
     new Minipass({ encoding: 'utf8' }),
