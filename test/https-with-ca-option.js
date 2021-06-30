@@ -7,7 +7,7 @@ const { resolve } = require('path')
 const fixtures = resolve(__dirname, 'fixtures/tls')
 const { readFileSync: read } = require('fs')
 
-const ca = read(`${fixtures}/minipass-ca.pem`)
+const ca = read(`${fixtures}/minipass-CA.pem`)
 const cert = read(`${fixtures}/localhost.crt`)
 const key = read(`${fixtures}/localhost.key`)
 const { createServer } = require('https')
