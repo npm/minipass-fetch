@@ -264,6 +264,24 @@ t.test('should support DataView as body', t => {
   return req.text().then(result => t.equal(result, 'a=1'))
 })
 
+t.test('should set rejectUnauthorized to true if NODE_TLS_REJECT_UNAUTHORIZED is not set', t => {
+  const tlsRejectBefore = process.env.NODE_TLS_REJECT_UNAUTHORIZED
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = null;
+  const req = new Request('http://a.b');
+  t.equal(Request.getNodeRequestOptions(req).rejectUnauthorized, true);
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = tlsRejectBefore;
+  t.end();
+})
+
+t.test('should set rejectUnauthorized to false if NODE_TLS_REJECT_UNAUTHORIZED is set to \'0\'', t => {
+  const tlsRejectBefore = process.env.NODE_TLS_REJECT_UNAUTHORIZED
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  const req = new Request('http://a.b');
+  t.equal(Request.getNodeRequestOptions(req).rejectUnauthorized, false);
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = tlsRejectBefore;
+  t.end();
+})
+
 t.test('get node request options', t => {
   t.match(Request.getNodeRequestOptions(new Request('http://a.b', {
     method: 'POST',
