@@ -106,7 +106,7 @@ t.test('reject if protocol unsupported', t =>
     'Only HTTP(S) protocols are supported')))
 
 t.test('reject with error on network failure', t =>
-  t.rejects(fetch('http://localhost:50000/'), {
+  t.rejects(fetch('http://localhost:55555/'), {
     name: 'FetchError',
     code: 'ECONNREFUSED',
     errno: 'ECONNREFUSED',
