@@ -400,7 +400,9 @@ t.test('handle network-error response', t =>
 t.test('handle DNS-error response', t =>
   t.rejects(fetch('http://domain.invalid'), {
     name: 'FetchError',
-    code: 'ENOTFOUND',
+    // this error depends on the platform and dns server in use,
+    // but it should be one of these two codes
+    code: /^(ENOTFOUND|EAI_AGAIN)$/,
   }))
 
 t.test('reject invalid json response', t =>
