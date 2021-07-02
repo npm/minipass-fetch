@@ -346,7 +346,11 @@ class TestServer {
     if (p === '/multipart') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'application/json')
-      const parser = new Multipart(req.headers['content-type'])
+      // the path option passed to the Multipart constructor cannot be an
+      // absolute path in Windows, we set it here manually because the default
+      // provided by 'parsed' is an absolute path
+      // ref: https://github.com/chjj/parsed/issues/10
+      const parser = new Multipart(req.headers['content-type'], { path: './' })
       let body = ''
       parser.on('part', (field, part) => body += field + '=' + part)
       parser.on('end', () => res.end(JSON.stringify({
