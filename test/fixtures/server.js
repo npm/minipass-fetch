@@ -83,17 +83,14 @@ class TestServer {
       new zlib.Deflate().end('hello world').concat().then(buf => res.end(buf))
     }
 
-    // TODO: add brotli support to minizlib
     if (p === '/brotli') {
-      if (typeof zlib.BrotliCompress !== 'function') {
-        res.status = 500
-        res.end('Not implemented\n')
-      } else {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'text/plain')
-        res.setHeader('Content-Encoding', 'br')
-        new zlib.BrotliCompress().end('hello world').concat().then(buf => res.end(buf))
-      }
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'text/plain')
+      res.setHeader('Content-Encoding', 'br')
+      // pre-compressed 'hello world', in-lined here so tests will run when the
+      // client doesn't support brotli
+      const buf = Buffer.from([0x0b, 0x05, 0x80, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x03])
+      res.end(buf)
     }
 
 

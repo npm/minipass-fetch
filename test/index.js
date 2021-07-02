@@ -15,6 +15,7 @@ const Body = require('../lib/body.js')
 const { getTotalBytes, extractContentType } = Body
 const Blob = require('../lib/blob.js')
 const zlib = require('minizlib')
+const realZlib = require('zlib')
 const { lookup } = require('dns')
 const supportToString = ({
   [Symbol.toStringTag]: 'z'
@@ -489,11 +490,21 @@ t.test('decompress deflate raw response from old apache server', t =>
     return res.text().then(result => t.equal(result, 'hello world'))
   }))
 
-t.test('decompress brotli response', t =>
-  fetch(`${base}brotli`).then(res => {
+t.test('decompress brotli response', t => {
+  // if the node core zlib doesn't export brotli functions, we'll end up
+  // rejecting the request with an error that comes from minizlib, assert
+  // that here
+  if (typeof realZlib.BrotliCompress !== 'function') {
+    return t.rejects(fetch(`${base}brotli`), {
+      message: 'Brotli is not supported in this version of Node.js',
+    }, 'rejects the promise')
+  }
+
+  return fetch(`${base}brotli`).then(res => {
     t.equal(res.headers.get('content-type'), 'text/plain')
     return res.text().then(result => t.equal(result, 'hello world'))
-  }))
+  })
+})
 
 t.test('handle no content response with brotli encoding', t =>
   fetch(`${base}no-content/brotli`).then(res => {
