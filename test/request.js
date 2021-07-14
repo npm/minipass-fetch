@@ -360,6 +360,15 @@ t.test('get node request options', t => {
     },
   })
 
+  t.match(Request.getNodeRequestOptions(new Request('http://x.y', {
+    method: 'GET',
+    family: 6,
+  })), {
+    href: 'http://x.y',
+    method: 'GET',
+    family: 6,
+  })
+
   t.test('function as agent', t => {
     let agentCalled = false
     const agent = () => {
