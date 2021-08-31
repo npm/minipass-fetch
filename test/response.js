@@ -76,7 +76,7 @@ t.test('should support blob() method', t =>
       'Content-Type': 'text/plain'
     }
   }).blob().then(result => {
-    t.isa(result, Blob)
+    t.type(result, Blob)
     t.equal(result.size, 3)
     t.equal(result.type, 'text/plain')
   }))
@@ -101,7 +101,7 @@ t.test('should support clone() method', t => {
   t.equal(cl.statusText, 'production')
   t.equal(cl.ok, false)
   // clone body shouldn't be the same body
-  t.notEqual(cl.body, body)
+  t.not(cl.body, body)
   return cl.text().then(result => t.equal(result, 'a=1'))
 })
 

@@ -68,12 +68,12 @@ const streamToPromise = (stream, dataHandler) =>
 
 t.test('start server', t => {
   local.start(t.end)
-  t.parent.tearDown(() => local.stop())
+  t.parent.teardown(() => local.stop())
 })
 
 t.test('return a promise', t => {
   const p = fetch(`${base}hello`)
-  t.isa(p, Promise)
+  t.type(p, Promise)
   t.equal(typeof p.then, 'function')
   t.end()
 })
@@ -542,7 +542,7 @@ t.test('collect handled errors on body stream, reject if used later', t => {
 t.test('allow disabling auto decompression', t =>
   fetch(`${base}gzip`, { compress: false }).then(res => {
     t.equal(res.headers.get('content-type'), 'text/plain')
-    return res.text().then(result => t.notEqual(result, 'hello world'))
+    return res.text().then(result => t.not(result, 'hello world'))
   }))
 
 t.test('do not overwrite accept-encoding when auto decompression', t =>
@@ -1732,7 +1732,7 @@ t.test('calculate content length and extract content type', t => {
 
   t.equal(getTotalBytes(streamRequest), null)
   t.equal(getTotalBytes(blobRequest), blobBody.size)
-  t.notEqual(getTotalBytes(formRequest), null)
+  t.not(getTotalBytes(formRequest), null)
   t.equal(getTotalBytes(bufferRequest), bufferBody.length)
   t.equal(getTotalBytes(stringRequest), bodyContent.length)
   t.equal(getTotalBytes(nullRequest), 0)
@@ -1833,7 +1833,7 @@ t.test('with optional `encoding`', t => {
       t.equal(res.status, 200)
       const padding = 'a'.repeat(1200)
       return res.textConverted().then(result => {
-        t.notEqual(result, `${padding}中文`)
+        t.not(result, `${padding}中文`)
       })
     })
   })
@@ -1850,7 +1850,7 @@ t.test('data uri', t => {
     fetch(dataUrl).then(r => {
       t.equal(r.status, 200)
       t.equal(r.headers.get('Content-Type'), 'image/gif')
-      return r.buffer().then(b => t.isa(b, Buffer))
+      return r.buffer().then(b => t.type(b, Buffer))
     }))
 
   t.test('reject invalid data uri', t =>
