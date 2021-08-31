@@ -144,7 +144,7 @@ t.test('should support arrayBuffer() method', t => {
   })
   t.equal(req.url, url)
   return req.arrayBuffer().then(function(result) {
-    t.isa(result, ArrayBuffer)
+    t.type(result, ArrayBuffer)
     const str = String.fromCharCode.apply(null, new Uint8Array(result))
     t.equal(str, 'a=1')
   })
@@ -188,7 +188,7 @@ t.test('should support blob() method', t => {
   })
   t.equal(req.url, url)
   return req.blob().then(function(result) {
-    t.isa(result, Blob)
+    t.type(result, Blob)
     t.equal(result.size, 3)
     t.equal(result.type, '')
   })
@@ -233,7 +233,7 @@ t.test('should support clone() method', t => {
   t.equal(cl.agent, agent)
   t.equal(cl.signal, signal)
   // clone body shouldn't be the same body
-  t.notEqual(cl.body, body)
+  t.not(cl.body, body)
   return Promise.all([cl.text(), req.text()]).then(results => {
     t.equal(results[0], 'a=1')
     t.equal(results[1], 'a=1')
@@ -262,6 +262,24 @@ t.test('should support DataView as body', t => {
     body: new DataView(stringToArrayBuffer('a=1'))
   })
   return req.text().then(result => t.equal(result, 'a=1'))
+})
+
+t.test('should set rejectUnauthorized to true if NODE_TLS_REJECT_UNAUTHORIZED is not set', t => {
+  const tlsRejectBefore = process.env.NODE_TLS_REJECT_UNAUTHORIZED
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = null;
+  const req = new Request('http://a.b');
+  t.equal(Request.getNodeRequestOptions(req).rejectUnauthorized, true);
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = tlsRejectBefore;
+  t.end();
+})
+
+t.test('should set rejectUnauthorized to false if NODE_TLS_REJECT_UNAUTHORIZED is set to \'0\'', t => {
+  const tlsRejectBefore = process.env.NODE_TLS_REJECT_UNAUTHORIZED
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  const req = new Request('http://a.b');
+  t.equal(Request.getNodeRequestOptions(req).rejectUnauthorized, false);
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = tlsRejectBefore;
+  t.end();
 })
 
 t.test('get node request options', t => {
