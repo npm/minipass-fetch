@@ -126,7 +126,7 @@ class TestServer {
     if (p === '/slow') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/plain')
-      res.write('test')
+      res.flushHeaders()
       setTimeout(() => res.end('test'), 1000)
     }
 
