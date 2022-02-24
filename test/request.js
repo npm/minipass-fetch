@@ -84,7 +84,7 @@ t.test('should support wrapping Request instance', t => {
 t.test('should override signal on derived Request instances', t => {
   const parentAbortController = new AbortController()
   const derivedAbortController = new AbortController()
-  const parentRequest = new Request('test', {
+  const parentRequest = new Request('http://localhost/test', {
     signal: parentAbortController.signal,
   })
   const derivedRequest = new Request(parentRequest, {
@@ -97,7 +97,7 @@ t.test('should override signal on derived Request instances', t => {
 
 t.test('should allow removing signal on derived Request instances', t => {
   const parentAbortController = new AbortController()
-  const parentRequest = new Request(`test`, {
+  const parentRequest = new Request('http://localhost/test', {
     signal: parentAbortController.signal,
   })
   const derivedRequest = new Request(parentRequest, {
@@ -109,17 +109,17 @@ t.test('should allow removing signal on derived Request instances', t => {
 })
 
 t.test('should throw error with GET/HEAD requests with body', t => {
-  t.throws(() => new Request('.', { body: '' }), TypeError)
-  t.throws(() => new Request('.', { body: 'a' }), TypeError)
-  t.throws(() => new Request('.', { body: '', method: 'HEAD' }), TypeError)
-  t.throws(() => new Request('.', { body: 'a', method: 'HEAD' }), TypeError)
-  t.throws(() => new Request('.', { body: 'a', method: 'get' }), TypeError)
-  t.throws(() => new Request('.', { body: 'a', method: 'head' }), TypeError)
+  t.throws(() => new Request('http://localhost', { body: '' }), TypeError)
+  t.throws(() => new Request('http://localhost', { body: 'a' }), TypeError)
+  t.throws(() => new Request('http://localhost', { body: '', method: 'HEAD' }), TypeError)
+  t.throws(() => new Request('http://localhost', { body: 'a', method: 'HEAD' }), TypeError)
+  t.throws(() => new Request('http://localhost', { body: 'a', method: 'get' }), TypeError)
+  t.throws(() => new Request('http://localhost', { body: 'a', method: 'head' }), TypeError)
   t.end()
 })
 
 t.test('should default to null as body', t => {
-  const req = new Request('.')
+  const req = new Request(base)
   t.equal(req.body, null)
   return req.text().then(result => t.equal(result, ''))
 })
@@ -194,13 +194,6 @@ t.test('should support blob() method', t => {
   })
 })
 
-t.test('should support arbitrary url', t => {
-  const url = 'anything'
-  const req = new Request(url)
-  t.equal(req.url, 'anything')
-  t.end()
-})
-
 t.test('should support clone() method', t => {
   const url = base
   const r = new Minipass().end('a=1')
@@ -241,7 +234,7 @@ t.test('should support clone() method', t => {
 })
 
 t.test('should support ArrayBuffer as body', t => {
-  const req = new Request('', {
+  const req = new Request('http://localhost', {
     method: 'POST',
     body: stringToArrayBuffer('a=1'),
   })
@@ -249,7 +242,7 @@ t.test('should support ArrayBuffer as body', t => {
 })
 
 t.test('should support Uint8Array as body', t => {
-  const req = new Request('', {
+  const req = new Request('http://localhost', {
     method: 'POST',
     body: new Uint8Array(stringToArrayBuffer('a=1')),
   })
@@ -257,7 +250,7 @@ t.test('should support Uint8Array as body', t => {
 })
 
 t.test('should support DataView as body', t => {
-  const req = new Request('', {
+  const req = new Request('http://localhost', {
     method: 'POST',
     body: new DataView(stringToArrayBuffer('a=1')),
   })
@@ -301,6 +294,18 @@ t.test('get node request options', t => {
     },
     agent: undefined,
   }, 'happy path')
+
+  t.match(Request.getNodeRequestOptions(new Request('http://user:password@a.b')), {
+    auth: 'user:password',
+  }, 'sets both user and password')
+
+  t.match(Request.getNodeRequestOptions(new Request('http://user:@a.b')), {
+    auth: 'user:',
+  }, 'sets just user')
+
+  t.match(Request.getNodeRequestOptions(new Request('http://:password@a.b')), {
+    auth: ':password',
+  }, 'sets just password')
 
   t.match(Request.getNodeRequestOptions(new Request('http://a.b', {
     method: 'PATCH',
@@ -349,7 +354,9 @@ t.test('get node request options', t => {
     body: 'xyz',
     compress: false,
   })), {
-    href: 'http://x.y',
+    path: '/',
+    protocol: 'http:',
+    hostname: 'x.y',
     method: 'PATCH',
     headers: {
       Accept: ['*/*'],
@@ -368,7 +375,9 @@ t.test('get node request options', t => {
     body: new Minipass().end('xyz'),
     compress: false,
   })), {
-    href: 'http://x.y',
+    path: '/',
+    protocol: 'http:',
+    hostname: 'x.y',
     method: 'PATCH',
     headers: {
       Accept: ['*/*'],
@@ -382,7 +391,9 @@ t.test('get node request options', t => {
     method: 'GET',
     family: 6,
   })), {
-    href: 'http://x.y',
+    path: '/',
+    protocol: 'http:',
+    hostname: 'x.y',
     method: 'GET',
     family: 6,
   })
@@ -396,7 +407,9 @@ t.test('get node request options', t => {
 
     Request.getNodeRequestOptions(new Request('http://a.b', { agent }), {
       method: 'GET',
-      href: 'http://a.b',
+      path: '/',
+      protocol: 'http:',
+      hostname: 'a.b',
       agent: 420,
     })
 
@@ -405,13 +418,11 @@ t.test('get node request options', t => {
   })
 
   t.throws(() => Request.getNodeRequestOptions(new Request('ok.html')), {
-    message: 'Only absolute URLs are supported',
-    constructor: TypeError,
+    code: 'ERR_INVALID_URL',
   })
 
   t.throws(() => Request.getNodeRequestOptions(new Request('xyz://ok.html')), {
     message: 'Only HTTP(S) protocols are supported',
-    constructor: TypeError,
   })
 
   t.throws(() => Request.getNodeRequestOptions(new Request('http://a.b', {
