@@ -28,13 +28,13 @@ t.test('should have attributes conforming to Web IDL', t => {
   }
   for (const toCheck of [
     'body', 'bodyUsed', 'arrayBuffer', 'blob', 'json', 'text',
-    'url', 'status', 'ok', 'redirected', 'statusText', 'headers', 'clone'
+    'url', 'status', 'ok', 'redirected', 'statusText', 'headers', 'clone',
   ]) {
     t.contain(enumerableProperties, toCheck)
   }
   for (const toCheck of [
     'body', 'bodyUsed', 'url', 'status', 'ok', 'redirected', 'statusText',
-    'headers'
+    'headers',
   ]) {
     t.throws(() => res[toCheck] = 'abc')
   }
@@ -45,15 +45,15 @@ t.test('should support empty options', t => {
   const r = new Minipass().end('a=1')
   r.pause()
   setTimeout(() => r.resume())
-  const res = new Response(r.pipe(new Minipass))
+  const res = new Response(r.pipe(new Minipass()))
   return res.text().then(result => t.equal(result, 'a=1'))
 })
 
 t.test('should support parsing headers', t => {
   const res = new Response(null, {
     headers: {
-      a: '1'
-    }
+      a: '1',
+    },
   })
   t.equal(res.headers.get('a'), '1')
   t.end()
@@ -73,8 +73,8 @@ t.test('should support blob() method', t =>
   new Response('a=1', {
     method: 'POST',
     headers: {
-      'Content-Type': 'text/plain'
-    }
+      'Content-Type': 'text/plain',
+    },
   }).blob().then(result => {
     t.type(result, Blob)
     t.equal(result.size, 3)
@@ -88,11 +88,11 @@ t.test('should support clone() method', t => {
   const body = r.pipe(new Minipass())
   const res = new Response(body, {
     headers: {
-      a: '1'
+      a: '1',
     },
     url: base,
     status: 346,
-    statusText: 'production'
+    statusText: 'production',
   })
   const cl = res.clone()
   t.equal(cl.headers.get('a'), '1')
@@ -159,8 +159,8 @@ t.test('trailers in response option', t => {
   const Headers = require('../lib/headers.js')
   const res = new Response(null, {
     trailer: Headers.createHeadersLenient({
-      'X-Node-Fetch': 'hello world!'
-    })
+      'X-Node-Fetch': 'hello world!',
+    }),
   })
   return res.trailer.then(trailers => {
     t.same(Array.from(trailers.keys()), ['x-node-fetch'])

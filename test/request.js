@@ -8,7 +8,7 @@ const FormData = require('form-data')
 const { AbortController } = require('abortcontroller-polyfill/dist/abortcontroller')
 const Blob = require('../lib/blob.js')
 const http = require('http')
-const {parse} = require('url')
+const { URL } = require('url')
 
 t.Test.prototype.addAssert('contain', 2, function (list, key, m, e) {
   m = m || 'expected item to be contained in list'
@@ -65,7 +65,7 @@ t.test('should support wrapping Request instance', t => {
     rejectUnauthorized: false,
   })
   const r2 = new Request(r1, {
-    follow: 2
+    follow: 2,
   })
 
   t.equal(r2.url, url)
@@ -85,10 +85,10 @@ t.test('should override signal on derived Request instances', t => {
   const parentAbortController = new AbortController()
   const derivedAbortController = new AbortController()
   const parentRequest = new Request('test', {
-    signal: parentAbortController.signal
+    signal: parentAbortController.signal,
   })
   const derivedRequest = new Request(parentRequest, {
-    signal: derivedAbortController.signal
+    signal: derivedAbortController.signal,
   })
   t.equal(parentRequest.signal, parentAbortController.signal)
   t.equal(derivedRequest.signal, derivedAbortController.signal)
@@ -98,10 +98,10 @@ t.test('should override signal on derived Request instances', t => {
 t.test('should allow removing signal on derived Request instances', t => {
   const parentAbortController = new AbortController()
   const parentRequest = new Request(`test`, {
-    signal: parentAbortController.signal
+    signal: parentAbortController.signal,
   })
   const derivedRequest = new Request(parentRequest, {
-    signal: null
+    signal: null,
   })
   t.equal(parentRequest.signal, parentAbortController.signal)
   t.equal(derivedRequest.signal, null)
@@ -128,8 +128,8 @@ t.test('should support parsing headers', t => {
   const url = base
   const req = new Request(url, {
     headers: {
-      a: '1'
-    }
+      a: '1',
+    },
   })
   t.equal(req.url, url)
   t.equal(req.headers.get('a'), '1')
@@ -140,10 +140,10 @@ t.test('should support arrayBuffer() method', t => {
   const url = base
   var req = new Request(url, {
     method: 'POST',
-    body: 'a=1'
+    body: 'a=1',
   })
   t.equal(req.url, url)
-  return req.arrayBuffer().then(function(result) {
+  return req.arrayBuffer().then(function (result) {
     t.type(result, ArrayBuffer)
     const str = String.fromCharCode.apply(null, new Uint8Array(result))
     t.equal(str, 'a=1')
@@ -154,7 +154,7 @@ t.test('should support text() method', t => {
   const url = base
   const req = new Request(url, {
     method: 'POST',
-    body: 'a=1'
+    body: 'a=1',
   })
   t.equal(req.url, url)
   return req.text().then(result => t.equal(result, 'a=1'))
@@ -164,7 +164,7 @@ t.test('should support json() method', t => {
   const url = base
   const req = new Request(url, {
     method: 'POST',
-    body: '{"a":1}'
+    body: '{"a":1}',
   })
   t.equal(req.url, url)
   return req.json().then(result => t.equal(result.a, 1))
@@ -174,7 +174,7 @@ t.test('should support buffer() method', t => {
   const url = base
   const req = new Request(url, {
     method: 'POST',
-    body: 'a=1'
+    body: 'a=1',
   })
   t.equal(req.url, url)
   return req.buffer().then(result => t.equal(result.toString(), 'a=1'))
@@ -184,10 +184,10 @@ t.test('should support blob() method', t => {
   const url = base
   var req = new Request(url, {
     method: 'POST',
-    body: Buffer.from('a=1')
+    body: Buffer.from('a=1'),
   })
   t.equal(req.url, url)
-  return req.blob().then(function(result) {
+  return req.blob().then(function (result) {
     t.type(result, Blob)
     t.equal(result.size, 3)
     t.equal(result.type, '')
@@ -214,7 +214,7 @@ t.test('should support clone() method', t => {
     method: 'POST',
     redirect: 'manual',
     headers: {
-      b: '2'
+      b: '2',
     },
     follow: 3,
     compress: false,
@@ -243,7 +243,7 @@ t.test('should support clone() method', t => {
 t.test('should support ArrayBuffer as body', t => {
   const req = new Request('', {
     method: 'POST',
-    body: stringToArrayBuffer('a=1')
+    body: stringToArrayBuffer('a=1'),
   })
   return req.text().then(result => t.equal(result, 'a=1'))
 })
@@ -251,7 +251,7 @@ t.test('should support ArrayBuffer as body', t => {
 t.test('should support Uint8Array as body', t => {
   const req = new Request('', {
     method: 'POST',
-    body: new Uint8Array(stringToArrayBuffer('a=1'))
+    body: new Uint8Array(stringToArrayBuffer('a=1')),
   })
   return req.text().then(result => t.equal(result, 'a=1'))
 })
@@ -259,27 +259,27 @@ t.test('should support Uint8Array as body', t => {
 t.test('should support DataView as body', t => {
   const req = new Request('', {
     method: 'POST',
-    body: new DataView(stringToArrayBuffer('a=1'))
+    body: new DataView(stringToArrayBuffer('a=1')),
   })
   return req.text().then(result => t.equal(result, 'a=1'))
 })
 
 t.test('should set rejectUnauthorized to true if NODE_TLS_REJECT_UNAUTHORIZED is not set', t => {
   const tlsRejectBefore = process.env.NODE_TLS_REJECT_UNAUTHORIZED
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = null;
-  const req = new Request('http://a.b');
-  t.equal(Request.getNodeRequestOptions(req).rejectUnauthorized, true);
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = tlsRejectBefore;
-  t.end();
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = null
+  const req = new Request('http://a.b')
+  t.equal(Request.getNodeRequestOptions(req).rejectUnauthorized, true)
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = tlsRejectBefore
+  t.end()
 })
 
-t.test('should set rejectUnauthorized to false if NODE_TLS_REJECT_UNAUTHORIZED is set to \'0\'', t => {
+t.test('should set rejectUnauthorized to false if NODE_TLS_REJECT_UNAUTHORIZED is \'0\'', t => {
   const tlsRejectBefore = process.env.NODE_TLS_REJECT_UNAUTHORIZED
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-  const req = new Request('http://a.b');
-  t.equal(Request.getNodeRequestOptions(req).rejectUnauthorized, false);
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = tlsRejectBefore;
-  t.end();
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+  const req = new Request('http://a.b')
+  t.equal(Request.getNodeRequestOptions(req).rejectUnauthorized, false)
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = tlsRejectBefore
+  t.end()
 })
 
 t.test('get node request options', t => {
@@ -291,12 +291,12 @@ t.test('get node request options', t => {
     body: null,
     compress: true,
   })), {
-    ...(parse('http://a.b')),
+    ...(new URL('http://a.b')),
     method: 'POST',
     headers: {
       'Content-Length': ['0'],
       'Accept-Encoding': ['gzip,deflate'],
-      'Connection': ['close'],
+      Connection: ['close'],
       'User-Agent': /^minipass-fetch\//,
     },
     agent: undefined,
@@ -310,12 +310,12 @@ t.test('get node request options', t => {
     body: '123',
     compress: true,
   })), {
-    ...(parse('http://a.b')),
+    ...(new URL('http://a.b')),
     method: 'PATCH',
     headers: {
       'Content-Length': ['3'],
       'Accept-Encoding': ['gzip,deflate'],
-      'Connection': ['close'],
+      Connection: ['close'],
       'User-Agent': /^minipass-fetch\//,
     },
     agent: undefined,
@@ -329,12 +329,12 @@ t.test('get node request options', t => {
     body: null,
     compress: true,
   })), {
-    ...(parse('http://a.b')),
+    ...(new URL('http://a.b')),
     method: 'PATCH',
     headers: {
       'Content-Length': undefined,
       'Accept-Encoding': ['gzip,deflate'],
-      'Connection': ['close'],
+      Connection: ['close'],
       'User-Agent': /^minipass-fetch\//,
     },
     agent: undefined,
@@ -417,11 +417,13 @@ t.test('get node request options', t => {
   t.throws(() => Request.getNodeRequestOptions(new Request('http://a.b', {
     method: 'POST',
     body: new (class extends Minipass {
-      get destroy () { return undefined }
+      get destroy () {
+        return undefined
+      }
     })(),
     signal: new AbortController().signal,
   })), {
-    message: 'Cancellation of streamed requests with AbortSignal is not supported'
+    message: 'Cancellation of streamed requests with AbortSignal is not supported',
   })
 
   t.end()

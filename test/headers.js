@@ -111,7 +111,7 @@ t.test('iterating through all headers with forEach', t => {
   t.same(result, [
     ['a', '1'],
     ['b', '2, 3'],
-    ['c', '4']
+    ['c', '4'],
   ])
 
   t.end()
@@ -126,7 +126,7 @@ t.test('iteration', t => {
   headers.append('b', '3')
 
   const result = []
-  for (let pair of headers) {
+  for (const pair of headers) {
     result.push(pair)
   }
   t.same(result, [
@@ -175,14 +175,14 @@ t.test('should ignore unsupported attributes while reading headers', t => {
   // This might change in the future: #181
   FakeHeader.prototype.z = 'fake'
 
-  const res = new FakeHeader
+  const res = new FakeHeader()
   res.a = 'string'
-  res.b = ['1','2']
+  res.b = ['1', '2']
   res.c = ''
   res.d = []
   res.e = 1
   res.f = [1, 2]
-  res.g = { a:1 }
+  res.g = { a: 1 }
   res.h = undefined
   res.i = null
   res.j = NaN
@@ -249,7 +249,7 @@ t.test('should accept headers as an iterable of tuples', t => {
   headers = new Headers([
     ['a', '1'],
     ['b', '2'],
-    ['a', '3']
+    ['a', '3'],
   ])
   t.equal(headers.get('a'), '1, 3')
   t.equal(headers.get('b'), '2')
@@ -257,14 +257,14 @@ t.test('should accept headers as an iterable of tuples', t => {
   headers = new Headers([
     new Set(['a', '1']),
     ['b', '2'],
-    new Map([['a', null], ['3', null]]).keys()
+    new Map([['a', null], ['3', null]]).keys(),
   ])
   t.equal(headers.get('a'), '1, 3')
   t.equal(headers.get('b'), '2')
 
   headers = new Headers(new Map([
     ['a', '1'],
-    ['b', '2']
+    ['b', '2'],
   ]))
   t.equal(headers.get('a'), '1')
   t.equal(headers.get('b'), '2')
@@ -272,8 +272,8 @@ t.test('should accept headers as an iterable of tuples', t => {
 })
 
 t.test('should throw a TypeError if non-tuple exists in a headers initializer', t => {
-  t.throws(() => new Headers([ ['b', '2', 'huh?'] ]), TypeError)
-  t.throws(() => new Headers([ 'b2' ]), TypeError)
+  t.throws(() => new Headers([['b', '2', 'huh?']]), TypeError)
+  t.throws(() => new Headers(['b2']), TypeError)
   t.throws(() => new Headers('b2'), TypeError)
   t.throws(() => new Headers({ [Symbol.iterator]: 42 }), TypeError)
   t.end()
