@@ -24,7 +24,7 @@ const fs = require('fs')
 const http = require('http')
 // use of url.parse here is intentional and for coverage purposes
 // eslint-disable-next-line node/no-deprecated-api
-const { parse: parseURL, URLSearchParams } = require('url')
+const { parse: parseURL, URLSearchParams, URL: CoreURL } = require('url')
 
 const vm = require('vm')
 const {
@@ -91,17 +91,21 @@ t.test('expose Headers, Response and Request constructors', t => {
 t.test('support proper toString output', { skip: !supportToString }, t => {
   t.equal(new Headers().toString(), '[object Headers]')
   t.equal(new Response().toString(), '[object Response]')
-  t.equal(new Request().toString(), '[object Request]')
+  t.equal(new Request('http://localhost:30000').toString(), '[object Request]')
   t.end()
 })
 
 t.test('reject with error if url is protocol relative', t =>
-  t.rejects(fetch('//example.com/'), new TypeError(
-    'Only absolute URLs are supported')))
+  t.rejects(fetch('//example.com/'), {
+    code: 'ERR_INVALID_URL',
+    name: 'TypeError',
+  }))
 
 t.test('reject if url is relative path', t =>
-  t.rejects(fetch('/some/path'), new TypeError(
-    'Only absolute URLs are supported')))
+  t.rejects(fetch('/some/path'), {
+    code: 'ERR_INVALID_URL',
+    name: 'TypeError',
+  }))
 
 t.test('reject if protocol unsupported', t =>
   t.rejects(fetch('ftp://example.com/'), new TypeError(
@@ -1503,9 +1507,20 @@ t.test('fetch with Request instance', t => {
   })
 })
 
-t.test('fetch with Node.js URL object', t => {
+t.test('fetch with Node.js legacy URL object', t => {
   const url = `${base}hello`
   const urlObj = parseURL(url)
+  const req = new Request(urlObj)
+  return fetch(req).then(res => {
+    t.equal(res.url, url)
+    t.equal(res.ok, true)
+    t.equal(res.status, 200)
+  })
+})
+
+t.test('fetch with Node.js URL object', t => {
+  const url = `${base}hello`
+  const urlObj = new CoreURL(url)
   const req = new Request(urlObj)
   return fetch(req).then(res => {
     t.equal(res.url, url)
