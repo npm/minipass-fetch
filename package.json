@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@npmcli/template-oss": "^2.8.1",
-    "@ungap/url-search-params": "^0.1.2",
+    "@ungap/url-search-params": "^0.2.2",
     "abort-controller": "^3.0.0",
     "abortcontroller-polyfill": "~1.7.3",
     "form-data": "^2.5.1",
