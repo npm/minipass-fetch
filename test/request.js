@@ -419,12 +419,10 @@ t.test('get node request options', t => {
 
   t.throws(() => Request.getNodeRequestOptions(new Request('ok.html')), {
     code: 'ERR_INVALID_URL',
-    constructor: TypeError,
   })
 
   t.throws(() => Request.getNodeRequestOptions(new Request('xyz://ok.html')), {
     message: 'Only HTTP(S) protocols are supported',
-    constructor: TypeError,
   })
 
   t.throws(() => Request.getNodeRequestOptions(new Request('http://a.b', {
