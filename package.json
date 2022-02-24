@@ -33,7 +33,7 @@
     "whatwg-url": "^7.0.0"
   },
   "dependencies": {
-    "minipass": "^3.1.0",
+    "minipass": "^3.1.6",
     "minipass-sized": "^1.0.3",
     "minizlib": "^2.1.2"
   },
