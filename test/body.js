@@ -3,13 +3,13 @@ const t = require('tap')
 const Body = require('../lib/body.js')
 const { URLSearchParams } = require('url')
 const stringToArrayBuffer = require('string-to-arraybuffer')
-const URLSearchParams_Polyfill = require('@ungap/url-search-params')
+const URLSearchParamsPolyfill = require('@ungap/url-search-params')
 const Blob = require('../lib/blob')
 const FormData = require('form-data')
 const Minipass = require('minipass')
 const MinipassSized = require('minipass-sized')
 const AbortError = require('../lib/abort-error.js')
-const {PassThrough} = require('stream')
+const { PassThrough } = require('stream')
 
 t.test('null body', async t => {
   const b = new Body()
@@ -27,7 +27,7 @@ t.test('url search params', async t => {
 })
 
 t.test('url search params polyfill', async t => {
-  const b = new Body(new URLSearchParams_Polyfill('a=1'))
+  const b = new Body(new URLSearchParamsPolyfill('a=1'))
   t.equal(b.body.toString(), 'a=1')
   t.equal(Body.extractContentType(b.body), null)
   t.equal(Body.getTotalBytes(b), 3)
@@ -42,19 +42,20 @@ t.test('url search params by another name', async t => {
 
 t.test('url search params by an even differenter name', async t => {
   const b = new Body(new (class Florb extends URLSearchParams {
-    get [Symbol.toStringTag] () { return 'Florb' }
+    get [Symbol.toStringTag] () {
+      return 'Florb'
+    }
   })('a=1'))
   t.equal(b.body.toString(), 'a=1')
   t.equal(Body.extractContentType(b.body), null)
   t.equal(Body.getTotalBytes(b), 3)
 })
 
-
 t.test('form-data', async t => {
   const f = new FormData()
-  f.append('a','1')
+  f.append('a', '1')
   const b = new Body(f)
-  t.match(b.body.getBuffer().toString(),`
+  t.match(b.body.getBuffer().toString(), `
 Content-Disposition: form-data; name="a"\r
 \r
 1\r
@@ -65,7 +66,7 @@ Content-Disposition: form-data; name="a"\r
 })
 
 t.test('blob body', async t => {
-  const b = new Body(new Blob('a=1', {type: 'foo', size: 3}))
+  const b = new Body(new Blob('a=1', { type: 'foo', size: 3 }))
   b.url = 'double'
   t.equal(Body.getTotalBytes(b), 3)
   t.equal(Body.extractContentType(b.body), 'foo')
@@ -87,7 +88,9 @@ t.test('blob body no content-type', async t => {
 
 t.test('blob body with content-type', async t => {
   const b = new Body(new Blob('a=1', { size: 3 }))
-  b.headers = { get () { return 'glerb' } }
+  b.headers = { get () {
+    return 'glerb'
+  } }
   t.match(await b.blob(), {
     [Blob.BUFFER]: Buffer.from('a=1'),
     size: 3,
@@ -115,31 +118,31 @@ t.test('uint 8 array body', async t => {
 })
 
 t.test('stream body', async t => {
-  const b = new Body(new Minipass({encoding:'utf8'}).end('a=1'))
+  const b = new Body(new Minipass({ encoding: 'utf8' }).end('a=1'))
   t.equal(Body.extractContentType(b.body), null)
   t.equal(await b.text(), 'a=1')
 })
 
 t.test('stream body with size', async t => {
-  const b = new Body(new Minipass({encoding:'utf8'}).end('a=1'), { size: 3 })
+  const b = new Body(new Minipass({ encoding: 'utf8' }).end('a=1'), { size: 3 })
   t.equal(Body.extractContentType(b.body), null)
   t.equal(await b.text(), 'a=1')
 })
 
 t.test('stream body with size thats already checking size', async t => {
-  const b = new Body(new MinipassSized({size: 3, encoding:'utf8'}).end('a=1'), { size: 3 })
+  const b = new Body(new MinipassSized({ size: 3, encoding: 'utf8' }).end('a=1'), { size: 3 })
   t.equal(Body.extractContentType(b.body), null)
   t.equal(await b.text(), 'a=1')
 })
 
 t.test('stream body that is a core stream', async t => {
-  const b = new Body(new PassThrough({encoding:'utf8'}).end('a=1'))
+  const b = new Body(new PassThrough({ encoding: 'utf8' }).end('a=1'))
   t.equal(Body.extractContentType(b.body), null)
   t.equal(await b.text(), 'a=1')
 })
 
 t.test('stream body goes too long', async t => {
-  const b = new Body(new PassThrough({encoding:'utf8'}).end('a=1'), {size: 1})
+  const b = new Body(new PassThrough({ encoding: 'utf8' }).end('a=1'), { size: 1 })
   t.equal(Body.extractContentType(b.body), null)
   await t.rejects(b.text(), {
     name: 'FetchError',
@@ -174,7 +177,9 @@ t.test('stream body too slow', async t => {
 })
 
 t.test('random toString-ing thing body', async t => {
-  const b = new Body({ toString () { return 'a=1' } })
+  const b = new Body({ toString () {
+    return 'a=1'
+  } })
   t.equal(b.body.toString(), 'a=1')
   t.equal(Body.extractContentType(b.body), null)
 })
@@ -218,12 +223,12 @@ t.test('more static method coverage', async t => {
     null)
   t.equal(Body.extractContentType(new Blob()), null)
   t.equal(Body.extractContentType({}), 'text/plain;charset=UTF-8')
-  t.equal(Body.getTotalBytes({body:{}}), null)
+  t.equal(Body.getTotalBytes({ body: {} }), null)
 })
 
 t.test('json', async t => {
   t.same(await new Body('{"a":1}').json(), { a: 1 })
-  await t.rejects(Object.assign(new Body('a=1'), {url:'asdf'}).json(), {
+  await t.rejects(Object.assign(new Body('a=1'), { url: 'asdf' }).json(), {
     name: 'FetchError',
     message: 'invalid json response body at asdf reason: ' +
       'Unexpected token a in JSON at position 0',
@@ -248,7 +253,7 @@ t.test('handles environments where setTimeout does not have unref', async t => {
 t.test('write to streams', async t => {
   const w = body => Body.writeToStream(
     new Minipass({ encoding: 'utf8' }),
-    {body}
+    { body }
   ).concat()
 
   t.equal(await w(), '')
@@ -266,13 +271,13 @@ t.test('clone', t => {
     const b = new Body('a=1')
     await b.text()
     t.throws(() => Body.clone(b), {
-      message: 'cannot clone body after it is used'
+      message: 'cannot clone body after it is used',
     })
   })
 
   t.test('clone formdata returns the form data', async t => {
     const f = new FormData()
-    f.append('a','1')
+    f.append('a', '1')
     const b = new Body(f)
     t.equal(Body.clone(b), f)
   })
@@ -308,12 +313,14 @@ t.test('clone', t => {
 })
 
 t.test('convert body', t => {
-  const {convert} = require('encoding')
+  const { convert } = require('encoding')
 
   t.test('content-type header', async t => {
     const s = '中文'
     const b = new Body(convert(s, 'gbk'))
-    b.headers = { get () { return 'text/plain; charset=gbk; qs=1' } }
+    b.headers = { get () {
+      return 'text/plain; charset=gbk; qs=1'
+    } }
     t.equal(await b.textConverted(), s)
   })
 
@@ -328,7 +335,6 @@ t.test('convert body', t => {
     const b = new Body(convert(s, 'gbk'))
     t.equal(await b.textConverted(), s)
   })
-
 
   t.test('html5 meta tag', async t => {
     const s = '<meta charset="gbk"><div>中文</div>'

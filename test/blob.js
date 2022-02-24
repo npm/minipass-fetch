@@ -19,7 +19,9 @@ t.test('mix of stuff', t => {
     ' ',
     new Uint8Array(stringToArrayBuffer('three')),
     new Blob(' '),
-    { toString () { return 'four' } },
+    { toString () {
+      return 'four'
+    } },
   ], { type: 'foo' })
   const x = 'one two three four'
   t.equal(b.type, 'foo')
@@ -52,7 +54,7 @@ t.test('slice', t => {
     b5.text(),
     b6.text(),
   ]).then(([b1, b2, b3, b4, b5, b6]) =>
-    t.strictSame({b1, b2, b3, b4, b5, b6}, {
+    t.strictSame({ b1, b2, b3, b4, b5, b6 }, {
       b1: '2 3 4',
       b2: '2 ',
       b3: '2 3',

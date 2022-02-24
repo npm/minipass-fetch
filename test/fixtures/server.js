@@ -1,11 +1,11 @@
 const http = require('http')
-const { parse } = require('url')
 const zlib = require('minizlib')
-const Minipass = require('minipass')
 const { multipart: Multipart } = require('parted')
 
 let convert
-try { convert = require('encoding').convert; } catch(e) {}
+try {
+  convert = require('encoding').convert
+} catch (e) {}
 
 class TestServer {
   constructor () {
@@ -16,7 +16,7 @@ class TestServer {
     // make it shorter here as we want to close server
     // quickly at the end of tests
     this.server.keepAliveTimeout = 1000
-    this.server.on('error', er => console.log(err.stack))
+    this.server.on('error', err => console.log(err.stack))
     this.server.on('connection', socket => socket.setTimeout(1500))
   }
 
@@ -29,7 +29,7 @@ class TestServer {
   }
 
   router (req, res) {
-    const p = parse(req.url).pathname
+    const p = req.url
 
     if (p === '/hello') {
       res.statusCode = 200
@@ -89,10 +89,12 @@ class TestServer {
       res.setHeader('Content-Encoding', 'br')
       // pre-compressed 'hello world', in-lined here so tests will run when the
       // client doesn't support brotli
-      const buf = Buffer.from([0x0b, 0x05, 0x80, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x03])
+      const buf = Buffer.from([
+        0x0b, 0x05, 0x80, 0x68, 0x65, 0x6c, 0x6c,
+        0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x03,
+      ])
       res.end(buf)
     }
-
 
     if (p === '/deflate-raw') {
       res.statusCode = 200
@@ -158,13 +160,15 @@ class TestServer {
     if (p === '/encoding/gb2312') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/html')
-      res.end(convert('<meta http-equiv="Content-Type" content="text/html; charset=gb2312"><div>中文</div>', 'gb2312'))
+      res.end(convert('<meta http-equiv="Content-Type" content="text/html; charset=gb2312">' +
+        '<div>中文</div>', 'gb2312'))
     }
 
     if (p === '/encoding/gb2312-reverse') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/html')
-      res.end(convert('<meta content="text/html; charset=gb2312" http-equiv="Content-Type"><div>中文</div>', 'gb2312'))
+      res.end(convert('<meta content="text/html; charset=gb2312" http-equiv="Content-Type">' +
+        '<div>中文</div>', 'gb2312'))
     }
 
     if (p === '/encoding/shift-jis') {
@@ -201,7 +205,8 @@ class TestServer {
       res.setHeader('Content-Type', 'text/html')
       res.setHeader('Transfer-Encoding', 'chunked')
       res.write('a'.repeat(10))
-      res.end(convert('<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS" /><div>日本語</div>', 'Shift_JIS'))
+      res.end(convert('<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS" />' +
+        '<div>日本語</div>', 'Shift_JIS'))
     }
 
     if (p === '/encoding/invalid') {
@@ -336,7 +341,7 @@ class TestServer {
         method: req.method,
         url: req.url,
         headers: req.headers,
-        body
+        body,
       })))
     }
 
@@ -354,7 +359,7 @@ class TestServer {
         method: req.method,
         url: req.url,
         headers: req.headers,
-        body: body
+        body: body,
       })))
       req.pipe(parser)
     }
@@ -381,7 +386,7 @@ class TestServer {
 module.exports = TestServer
 
 if (require.main === module) {
-  const server = new TestServer
+  const server = new TestServer()
   server.start(() =>
     console.log(`Server started listening at port ${server.port}`))
 }

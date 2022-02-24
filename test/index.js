@@ -3,7 +3,7 @@ const t = require('tap')
 const TestServer = require('./fixtures/server.js')
 const fetch = require('../lib/index.js')
 const stringToArrayBuffer = require('string-to-arraybuffer')
-const URLSearchParams_Polyfill = require('@ungap/url-search-params')
+const URLSearchParamsPolyfill = require('@ungap/url-search-params')
 const { URL } = require('whatwg-url')
 const { FetchError, Headers, Request, Response } = fetch
 const FetchErrorOrig = require('../lib/fetch-error.js')
@@ -14,21 +14,22 @@ const ResponseOrig = require('../lib/response.js')
 const Body = require('../lib/body.js')
 const { getTotalBytes, extractContentType } = Body
 const Blob = require('../lib/blob.js')
-const zlib = require('minizlib')
 const realZlib = require('zlib')
 const { lookup } = require('dns')
 const supportToString = ({
-  [Symbol.toStringTag]: 'z'
+  [Symbol.toStringTag]: 'z',
 }).toString() === '[object z]'
 const FormData = require('form-data')
 const fs = require('fs')
 const http = require('http')
+// use of url.parse here is intentional and for coverage purposes
+// eslint-disable-next-line node/no-deprecated-api
 const { parse: parseURL, URLSearchParams } = require('url')
 
 const vm = require('vm')
 const {
   ArrayBuffer: VMArrayBuffer,
-  Uint8Array: VMUint8Array
+  Uint8Array: VMUint8Array,
 } = vm.runInNewContext('this')
 
 const { spawn } = require('child_process')
@@ -143,29 +144,29 @@ t.test('accept json response', t =>
 
 t.test('send request with custom hedaers', t =>
   fetch(`${base}inspect`, {
-    headers: { 'x-custom-header': 'abc' }
+    headers: { 'x-custom-header': 'abc' },
   }).then(res => res.json()).then(res =>
     t.equal(res.headers['x-custom-header'], 'abc')))
 
 t.test('accept headers instance', t =>
   fetch(`${base}inspect`, {
-    headers: new Headers({ 'x-custom-header': 'abc' })
+    headers: new Headers({ 'x-custom-header': 'abc' }),
   }).then(res => res.json()).then(res =>
     t.equal(res.headers['x-custom-header'], 'abc')))
 
 t.test('accept custom host header', t =>
   fetch(`${base}inspect`, {
     headers: {
-      host: 'example.com'
-    }
+      host: 'example.com',
+    },
   }).then(res => res.json()).then(res =>
     t.equal(res.headers.host, 'example.com')))
 
 t.test('accept custom HoSt header', t =>
   fetch(`${base}inspect`, {
     headers: {
-      HoSt: 'example.com'
-    }
+      HoSt: 'example.com',
+    },
   }).then(res => res.json()).then(res =>
     t.equal(res.headers.host, 'example.com')))
 
@@ -236,11 +237,10 @@ t.test('no follow non-GET redirect if body is readable stream', t => {
   })
 })
 
-
 t.test('obey maximum redirect, reject case', t => {
   const url = `${base}redirect/chain`
   const opts = {
-    follow: 1
+    follow: 1,
   }
   return t.rejects(fetch(url, opts), {
     name: 'FetchError',
@@ -251,7 +251,7 @@ t.test('obey maximum redirect, reject case', t => {
 t.test('obey redirect chain, resolve case', t => {
   const url = `${base}redirect/chain`
   const opts = {
-    follow: 2
+    follow: 2,
   }
   return fetch(url, opts).then(res => {
     t.equal(res.url, `${base}inspect`)
@@ -259,11 +259,10 @@ t.test('obey redirect chain, resolve case', t => {
   })
 })
 
-
 t.test('allow not following redirect', t => {
   const url = `${base}redirect/301`
   const opts = {
-    follow: 0
+    follow: 0,
   }
   return t.rejects(fetch(url, opts), {
     name: 'FetchError',
@@ -274,7 +273,7 @@ t.test('allow not following redirect', t => {
 t.test('redirect mode, manual flag', t => {
   const url = `${base}redirect/301`
   const opts = {
-    redirect: 'manual'
+    redirect: 'manual',
   }
   return fetch(url, opts).then(res => {
     t.equal(res.url, url)
@@ -283,11 +282,10 @@ t.test('redirect mode, manual flag', t => {
   })
 })
 
-
 t.test('redirect mode, error flag', t => {
   const url = `${base}redirect/301`
   const opts = {
-    redirect: 'error'
+    redirect: 'error',
   }
   return t.rejects(fetch(url, opts), {
     name: 'FetchError',
@@ -295,11 +293,10 @@ t.test('redirect mode, error flag', t => {
   })
 })
 
-
 t.test('redirect mode, manual flag when there is no redirect', t => {
   const url = `${base}hello`
   const opts = {
-    redirect: 'manual'
+    redirect: 'manual',
   }
   return fetch(url, opts).then(res => {
     t.equal(res.url, url)
@@ -311,14 +308,13 @@ t.test('redirect mode, manual flag when there is no redirect', t => {
 t.test('redirect code 301 and keep existing headers', t => {
   const url = `${base}redirect/301`
   const opts = {
-    headers: new Headers({ 'x-custom-header': 'abc' })
+    headers: new Headers({ 'x-custom-header': 'abc' }),
   }
   return fetch(url, opts).then(res => {
     t.equal(res.url, `${base}inspect`)
     return res.json()
   }).then(res => t.equal(res.headers['x-custom-header'], 'abc'))
 })
-
 
 t.test('treat broken redirect as ordinary response (follow)', t => {
   const url = `${base}redirect/no-location`
@@ -329,11 +325,10 @@ t.test('treat broken redirect as ordinary response (follow)', t => {
   })
 })
 
-
 t.test('treat broken redirect as ordinary response (manual)', t => {
   const url = `${base}redirect/no-location`
   const opts = {
-    redirect: 'manual'
+    redirect: 'manual',
   }
   return fetch(url, opts).then(res => {
     t.equal(res.url, url)
@@ -352,7 +347,7 @@ t.test('ignore invalid headers', t => {
   var headers = {
     'Invalid-Header ': 'abc\r\n',
     'Invalid-Header-Value': '\x07k\r\n',
-    'Set-Cookie': ['\x07k\r\n', '\x07kk\r\n']
+    'Set-Cookie': ['\x07k\r\n', '\x07kk\r\n'],
   }
   headers = createHeadersLenient(headers)
   t.equal(headers['Invalid-Header '], undefined)
@@ -360,7 +355,6 @@ t.test('ignore invalid headers', t => {
   t.equal(headers['Set-Cookie'], undefined)
   t.end()
 })
-
 
 t.test('handle client-error response', t => {
   const url = `${base}error/400`
@@ -375,7 +369,6 @@ t.test('handle client-error response', t => {
     })
   })
 })
-
 
 t.test('handle server-error response', t => {
   const url = `${base}error/500`
@@ -438,7 +431,7 @@ t.test('reject parsing no content response as json', t =>
     t.equal(res.ok, true)
     return t.rejects(res.json(), {
       name: 'FetchError',
-      type: 'invalid-json'
+      type: 'invalid-json',
     })
   }))
 
@@ -562,14 +555,14 @@ t.test('do not overwrite accept-encoding when auto decompression', t =>
   fetch(`${base}inspect`, {
     compress: true,
     headers: {
-      'Accept-Encoding': 'gzip'
-    }
+      'Accept-Encoding': 'gzip',
+    },
   })
-  .then(res => res.json())
-  .then(res => t.equal(res.headers['accept-encoding'], 'gzip')))
+    .then(res => res.json())
+    .then(res => t.equal(res.headers['accept-encoding'], 'gzip')))
 
 t.test('allow custom timeout', t => {
-  return t.rejects(fetch(`${base}timeout`, {timeout: 20}), {
+  return t.rejects(fetch(`${base}timeout`, { timeout: 20 }), {
     name: 'FetchError',
     type: 'request-timeout',
   })
@@ -601,7 +594,7 @@ t.test('clear internal timeout on fetch response', { timeout: 2000 }, t => {
     })
 })
 
-t.test('clear internal timeout on fetch redirect', {timeout: 2000}, t => {
+t.test('clear internal timeout on fetch redirect', { timeout: 2000 }, t => {
   const args = ['-e', `require('./')('${base}redirect/301', { timeout: 10000 })`]
   spawn(process.execPath, args, { cwd: path.resolve(__dirname, '..') })
     .on('close', (code, signal) => {
@@ -638,10 +631,10 @@ t.test('request cancellation with signal', { timeout: 500 }, t => {
         signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
-          body: JSON.stringify({ hello: 'world' })
-        }
+          body: JSON.stringify({ hello: 'world' }),
+        },
       }
-    )
+    ),
   ]
   setTimeout(() => {
     controller.abort()
@@ -658,7 +651,7 @@ t.test('reject immediately if signal already aborted', t => {
   const url = `${base}timeout`
   const controller = new AbortController()
   const opts = {
-    signal: controller.signal
+    signal: controller.signal,
   }
   controller.abort()
   const fetched = fetch(url, opts)
@@ -706,7 +699,7 @@ t.test('remove internal AbortSignal listener when request aborted', t => {
 t.test('allow redirects to be aborted', t => {
   const abortController = new AbortController()
   const request = new Request(`${base}redirect/slow`, {
-    signal: abortController.signal
+    signal: abortController.signal,
   })
   setTimeout(() => abortController.abort(), 20)
   return t.rejects(fetch(request), { name: 'AbortError' })
@@ -715,7 +708,7 @@ t.test('allow redirects to be aborted', t => {
 t.test('allow redirected response body to be aborted', t => {
   const abortController = new AbortController()
   const request = new Request(`${base}redirect/slow-stream`, {
-    signal: abortController.signal
+    signal: abortController.signal,
   })
   return t.rejects(fetch(request).then(res => {
     t.equal(res.headers.get('content-type'), 'text/plain')
@@ -771,24 +764,24 @@ t.test('raise AbortError when aborted before stream is closed', t => {
 })
 
 t.test('cancel request body stream with AbortError when aborted', {
-  skip: supportStreamDestroy ? false : 'stream.destroy not supported'
+  skip: supportStreamDestroy ? false : 'stream.destroy not supported',
 }, t => {
   const controller = new AbortController()
   const body = new Minipass({ objectMode: true })
   const promise = fetch(`${base}slow`, {
     signal: controller.signal,
     body,
-    method: 'POST'
+    method: 'POST',
   })
 
   const result = Promise.all([
     new Promise((resolve, reject) => {
       body.on('error', (error) => {
-        t.match(error, {name: 'AbortError'})
+        t.match(error, { name: 'AbortError' })
         resolve()
       })
     }),
-    t.rejects(promise, {name: 'AbortError'}),
+    t.rejects(promise, { name: 'AbortError' }),
   ])
 
   controller.abort()
@@ -799,7 +792,9 @@ t.test('cancel request body stream with AbortError when aborted', {
 t.test('immediately reject when attempting to cancel and unsupported', t => {
   const controller = new AbortController()
   const body = new (class extends Minipass {
-    get destroy () { return undefined }
+    get destroy () {
+      return undefined
+    }
   })({ objectMode: true })
 
   return t.rejects(fetch(`${base}slow`, {
@@ -832,8 +827,8 @@ t.test('set default User-Agent', t =>
 t.test('setting User-Agent', t =>
   fetch(`${base}inspect`, {
     headers: {
-      'user-agent': 'faked'
-    }
+      'user-agent': 'faked',
+    },
   }).then(res => res.json()).then(res =>
     t.equal(res.headers['user-agent'], 'faked')))
 
@@ -844,24 +839,24 @@ t.test('set default Accept header', t =>
 t.test('allow setting Accept header', t =>
   fetch(`${base}inspect`, {
     headers: {
-      'accept': 'application/json'
-    }
+      accept: 'application/json',
+    },
   }).then(res => res.json()).then(res =>
     t.equal(res.headers.accept, 'application/json')))
 
 t.test('allow POST request', t =>
   fetch(`${base}inspect`, { method: 'POST' })
-  .then(res => res.json()).then(res => {
-    t.equal(res.method, 'POST')
-    t.equal(res.headers['transfer-encoding'], undefined)
-    t.equal(res.headers['content-type'], undefined)
-    t.equal(res.headers['content-length'], '0')
-  }))
+    .then(res => res.json()).then(res => {
+      t.equal(res.method, 'POST')
+      t.equal(res.headers['transfer-encoding'], undefined)
+      t.equal(res.headers['content-type'], undefined)
+      t.equal(res.headers['content-length'], '0')
+    }))
 
 t.test('POST request with string body', t =>
   fetch(`${base}inspect`, {
     method: 'POST',
-    body: 'a=1'
+    body: 'a=1',
   }).then(res => res.json()).then(res => {
     t.equal(res.method, 'POST')
     t.equal(res.body, 'a=1')
@@ -873,7 +868,7 @@ t.test('POST request with string body', t =>
 t.test('POST request with buffer body', t =>
   fetch(`${base}inspect`, {
     method: 'POST',
-    body: Buffer.from('a=1', 'utf-8')
+    body: Buffer.from('a=1', 'utf-8'),
   }).then(res => res.json()).then(res => {
     t.equal(res.method, 'POST')
     t.equal(res.body, 'a=1')
@@ -885,7 +880,7 @@ t.test('POST request with buffer body', t =>
 t.test('allow POST request with ArrayBuffer body', t =>
   fetch(`${base}inspect`, {
     method: 'POST',
-    body: stringToArrayBuffer('Hello, world!\n')
+    body: stringToArrayBuffer('Hello, world!\n'),
   }).then(res => res.json()).then(res => {
     t.equal(res.method, 'POST')
     t.equal(res.body, 'Hello, world!\n')
@@ -929,7 +924,7 @@ t.test('POST request with ArrayBufferView (DataView) body', t => {
   const url = `${base}inspect`
   const opts = {
     method: 'POST',
-    body: new DataView(stringToArrayBuffer('Hello, world!\n'))
+    body: new DataView(stringToArrayBuffer('Hello, world!\n')),
   }
   return fetch(url, opts).then(res => res.json()).then(res => {
     t.equal(res.method, 'POST')
@@ -945,7 +940,7 @@ t.test('POST with ArrayBufferView (Uint8Array) body from a VM context', t => {
   const url = `${base}inspect`
   const opts = {
     method: 'POST',
-    body: new VMUint8Array(Buffer.from('Hello, world!\n'))
+    body: new VMUint8Array(Buffer.from('Hello, world!\n')),
   }
   return fetch(url, opts).then(res => res.json()).then(res => {
     t.equal(res.method, 'POST')
@@ -960,7 +955,7 @@ t.test('POST with ArrayBufferView (Uint8Array, offset, length) body', t => {
   const url = `${base}inspect`
   const opts = {
     method: 'POST',
-    body: new Uint8Array(stringToArrayBuffer('Hello, world!\n'), 7, 6)
+    body: new Uint8Array(stringToArrayBuffer('Hello, world!\n'), 7, 6),
   }
   return fetch(url, opts).then(res => res.json()).then(res => {
     t.equal(res.method, 'POST')
@@ -975,7 +970,7 @@ t.test('POST with blob body without type', t => {
   const url = `${base}inspect`
   const opts = {
     method: 'POST',
-    body: new Blob(['a=1'])
+    body: new Blob(['a=1']),
   }
   return fetch(url, opts).then(res => res.json()).then(res => {
     t.equal(res.method, 'POST')
@@ -991,8 +986,8 @@ t.test('POST with blob body with type', t => {
   const opts = {
     method: 'POST',
     body: new Blob(['a=1'], {
-      type: 'text/plain;charset=UTF-8'
-    })
+      type: 'text/plain;charset=UTF-8',
+    }),
   }
   return fetch(url, opts).then(res => {
     return res.json()
@@ -1006,7 +1001,7 @@ t.test('POST with blob body with type', t => {
 })
 
 t.test('POST with readable stream as body', t => {
-  let body = new Minipass()
+  const body = new Minipass()
   body.pause()
   body.end('a=1')
   setTimeout(() => {
@@ -1016,7 +1011,7 @@ t.test('POST with readable stream as body', t => {
   const url = `${base}inspect`
   const opts = {
     method: 'POST',
-    body: body.pipe(new Minipass())
+    body: body.pipe(new Minipass()),
   }
   return fetch(url, opts).then(res => res.json()).then(res => {
     t.equal(res.method, 'POST')
@@ -1029,12 +1024,12 @@ t.test('POST with readable stream as body', t => {
 
 t.test('POST with form-data as body', t => {
   const form = new FormData()
-  form.append('a','1')
+  form.append('a', '1')
 
   const url = `${base}multipart`
   const opts = {
     method: 'POST',
-    body: form
+    body: form,
   }
   return fetch(url, opts).then(res => {
     return res.json()
@@ -1053,7 +1048,7 @@ t.test('POST with form-data using stream as body', t => {
   const url = `${base}multipart`
   const opts = {
     method: 'POST',
-    body: form
+    body: form,
   }
 
   return fetch(url, opts).then(res => {
@@ -1068,16 +1063,16 @@ t.test('POST with form-data using stream as body', t => {
 
 t.test('POST with form-data as body and custom headers', t => {
   const form = new FormData()
-  form.append('a','1')
+  form.append('a', '1')
 
   const headers = form.getHeaders()
-  headers['b'] = '2'
+  headers.b = '2'
 
   const url = `${base}multipart`
   const opts = {
     method: 'POST',
     body: form,
-    headers
+    headers,
   }
   return fetch(url, opts).then(res => {
     return res.json()
@@ -1095,7 +1090,7 @@ t.test('POST with object body', t => {
   // note that fetch simply calls tostring on an object
   const opts = {
     method: 'POST',
-    body: { a: 1 }
+    body: { a: 1 },
   }
   return fetch(url, opts).then(res => {
     return res.json()
@@ -1109,17 +1104,17 @@ t.test('POST with object body', t => {
 
 const uspOpt = {
   skip: typeof URLSearchParams === 'function' ? false
-    : 'no URLSearchParams function'
+  : 'no URLSearchParams function',
 }
 
-t.test('constructing a Response with URLSearchParams as body should have a Content-Type', uspOpt, t => {
+t.test('constructing a Response with URLSearchParams as body has a Content-Type', uspOpt, t => {
   const params = new URLSearchParams()
   const res = new Response(params)
   res.headers.get('Content-Type')
   t.equal(res.headers.get('Content-Type'), 'application/x-www-form-urlencoded;charset=UTF-8')
 })
 
-t.test('constructing a Request with URLSearchParams as body should have a Content-Type', uspOpt, t => {
+t.test('constructing a Request with URLSearchParams as body has a Content-Type', uspOpt, t => {
   const params = new URLSearchParams()
   const req = new Request(base, { method: 'POST', body: params })
   t.equal(req.headers.get('Content-Type'), 'application/x-www-form-urlencoded;charset=UTF-8')
@@ -1127,17 +1122,17 @@ t.test('constructing a Request with URLSearchParams as body should have a Conten
 
 t.test('Reading a body with URLSearchParams should echo back the result', uspOpt, t => {
   const params = new URLSearchParams()
-  params.append('a','1')
+  params.append('a', '1')
   return new Response(params).text().then(text => {
     t.equal(text, 'a=1')
   })
 })
 
 // Body should been cloned...
-t.test('constructing a Request/Response with URLSearchParams and mutating it should not affected body', uspOpt, t => {
+t.test('Request/Response with URLSearchParams and mutation should not affected body', uspOpt, t => {
   const params = new URLSearchParams()
   const req = new Request(`${base}inspect`, { method: 'POST', body: params })
-  params.append('a','1')
+  params.append('a', '1')
   return req.text().then(text => {
     t.equal(text, '')
   })
@@ -1145,7 +1140,7 @@ t.test('constructing a Request/Response with URLSearchParams and mutating it sho
 
 t.test('POST with URLSearchParams as body', uspOpt, t => {
   const params = new URLSearchParams()
-  params.append('a','1')
+  params.append('a', '1')
 
   const url = `${base}inspect`
   const opts = {
@@ -1165,7 +1160,7 @@ t.test('POST with URLSearchParams as body', uspOpt, t => {
 t.test('recognize URLSearchParams when extended', uspOpt, t => {
   class CustomSearchParams extends URLSearchParams {}
   const params = new CustomSearchParams()
-  params.append('a','1')
+  params.append('a', '1')
 
   const url = `${base}inspect`
   const opts = {
@@ -1185,9 +1180,9 @@ t.test('recognize URLSearchParams when extended', uspOpt, t => {
 /* for 100% code coverage, checks for duck-typing-only detection
  * where both constructor.name and brand tests fail */
 t.test('recognize URLSearchParams when extended from polyfill', t => {
-  class CustomPolyfilledSearchParams extends URLSearchParams_Polyfill {}
+  class CustomPolyfilledSearchParams extends URLSearchParamsPolyfill {}
   const params = new CustomPolyfilledSearchParams()
-  params.append('a','1')
+  params.append('a', '1')
 
   const url = `${base}inspect`
   const opts = {
@@ -1210,9 +1205,9 @@ t.test('overwrite Content-Length if possible', t => {
   const opts = {
     method: 'POST',
     headers: {
-      'Content-Length': '1000'
+      'Content-Length': '1000',
     },
-    body: 'a=1'
+    body: 'a=1',
   }
   return fetch(url, opts).then(res => {
     return res.json()
@@ -1229,7 +1224,7 @@ t.test('PUT', t => {
   const url = `${base}inspect`
   const opts = {
     method: 'PUT',
-    body: 'a=1'
+    body: 'a=1',
   }
   return fetch(url, opts).then(res => {
     return res.json()
@@ -1242,7 +1237,7 @@ t.test('PUT', t => {
 t.test('DELETE', t => {
   const url = `${base}inspect`
   const opts = {
-    method: 'DELETE'
+    method: 'DELETE',
   }
   return fetch(url, opts).then(res => {
     return res.json()
@@ -1255,7 +1250,7 @@ t.test('DELETE with string body', t => {
   const url = `${base}inspect`
   const opts = {
     method: 'DELETE',
-    body: 'a=1'
+    body: 'a=1',
   }
   return fetch(url, opts).then(res => {
     return res.json()
@@ -1271,7 +1266,7 @@ t.test('PATCH', t => {
   const url = `${base}inspect`
   const opts = {
     method: 'PATCH',
-    body: 'a=1'
+    body: 'a=1',
   }
   return fetch(url, opts).then(res => {
     return res.json()
@@ -1284,7 +1279,7 @@ t.test('PATCH', t => {
 t.test('HEAD', t => {
   const url = `${base}hello`
   const opts = {
-    method: 'HEAD'
+    method: 'HEAD',
   }
   return fetch(url, opts).then(res => {
     t.equal(res.status, 200)
@@ -1300,7 +1295,7 @@ t.test('HEAD', t => {
 t.test('HEAD with content-encoding header', t => {
   const url = `${base}error/404`
   const opts = {
-    method: 'HEAD'
+    method: 'HEAD',
   }
   return fetch(url, opts).then(res => {
     t.equal(res.status, 404)
@@ -1314,7 +1309,7 @@ t.test('HEAD with content-encoding header', t => {
 t.test('OPTIONS', t => {
   const url = `${base}options`
   const opts = {
-    method: 'OPTIONS'
+    method: 'OPTIONS',
   }
   return fetch(url, opts).then(res => {
     t.equal(res.status, 200)
@@ -1349,7 +1344,7 @@ t.test('response trailers', t =>
 t.test('maximum response size, multiple chunk', t => {
   const url = `${base}size/chunk`
   const opts = {
-    size: 5
+    size: 5,
   }
   return fetch(url, opts).then(res => {
     t.equal(res.status, 200)
@@ -1364,7 +1359,7 @@ t.test('maximum response size, multiple chunk', t => {
 t.test('maximum response size, single chunk', t => {
   const url = `${base}size/long`
   const opts = {
-    size: 5
+    size: 5,
   }
   return t.rejects(fetch(url, opts).then(res => {
     t.equal(res.status, 200)
@@ -1404,7 +1399,7 @@ t.test('clone a response, and use both as stream', t => {
 
     return Promise.all([
       streamToPromise(res.body, dataHandler),
-      streamToPromise(r1.body, dataHandler)
+      streamToPromise(r1.body, dataHandler),
     ])
   })
 })
@@ -1414,7 +1409,7 @@ t.test('clone a json response and log it as text response', t => {
   return fetch(url).then(res => {
     const r1 = res.clone()
     return Promise.all([res.json(), r1.text()]).then(results => {
-      t.same(results[0], {name: 'value'})
+      t.same(results[0], { name: 'value' })
       t.equal(results[1], '{"name":"value"}')
     })
   })
@@ -1425,7 +1420,7 @@ t.test('clone a json response, and then log it as text response', t => {
   return fetch(url).then(res => {
     const r1 = res.clone()
     return res.json().then(result => {
-      t.same(result, {name: 'value'})
+      t.same(result, { name: 'value' })
       return r1.text().then(result => {
         t.equal(result, '{"name":"value"}')
       })
@@ -1440,7 +1435,7 @@ t.test('clone a json response, first log as text response, then return json obje
     return r1.text().then(result => {
       t.equal(result, '{"name":"value"}')
       return res.json().then(result => {
-        t.same(result, {name: 'value'})
+        t.same(result, { name: 'value' })
       })
     })
   })
@@ -1469,7 +1464,7 @@ t.test('return all headers using raw()', t => {
   return fetch(url).then(res => {
     const expected = [
       'a=1',
-      'b=1'
+      'b=1',
     ]
 
     t.same(res.headers.raw()['set-cookie'], expected)
@@ -1488,13 +1483,13 @@ t.test('send request with connection keep-alive if agent is provided', t => {
   const url = `${base}inspect`
   const opts = {
     agent: new http.Agent({
-      keepAlive: true
-    })
+      keepAlive: true,
+    }),
   }
   return fetch(url, opts).then(res => {
     return res.json()
   }).then(res => {
-    t.equal(res.headers['connection'], 'keep-alive')
+    t.equal(res.headers.connection, 'keep-alive')
   })
 })
 
@@ -1569,9 +1564,9 @@ t.test('blob round-trip', t => {
     type = blob.type
     return fetch(url, {
       method: 'POST',
-      body: blob
+      body: blob,
     })
-  }).then(res => res.json()).then(({body, headers}) => {
+  }).then(res => res.json()).then(({ body, headers }) => {
     t.equal(body, 'world')
     t.equal(headers['content-type'], type)
     t.equal(headers['content-length'], String(length))
@@ -1583,14 +1578,14 @@ t.test('overwrite Request instance', t => {
   const req = new Request(url, {
     method: 'POST',
     headers: {
-      a: '1'
-    }
+      a: '1',
+    },
   })
   return fetch(req, {
     method: 'GET',
     headers: {
-      a: '2'
-    }
+      a: '2',
+    },
   }).then(res => {
     return res.json()
   }).then(body => {
@@ -1612,7 +1607,7 @@ t.test('arrayBuffer(), blob(), text(), json() and buffer() method in Body constr
 t.test('https request', { timeout: 5000 }, t => {
   const url = 'https://github.com/'
   const opts = {
-    method: 'HEAD'
+    method: 'HEAD',
   }
   return fetch(url, opts).then(res => {
     t.equal(res.status, 200)
@@ -1622,14 +1617,16 @@ t.test('https request', { timeout: 5000 }, t => {
 
 // issue #414
 t.test('reject if attempt to accumulate body stream throws', t => {
-  let body = new Minipass()
+  const body = new Minipass()
   body.pause()
   body.end('a=1')
   setTimeout(() => body.resume(), 100)
   const res = new Response(body.pipe(new Minipass()))
   const bufferConcat = Buffer.concat
   const restoreBufferConcat = () => Buffer.concat = bufferConcat
-  Buffer.concat = () => { throw new Error('embedded error'); }
+  Buffer.concat = () => {
+    throw new Error('embedded error')
+  }
 
   const textPromise = res.text()
   // Ensure that `Buffer.concat` is always restored:
@@ -1642,10 +1639,10 @@ t.test('reject if attempt to accumulate body stream throws', t => {
   })
 })
 
-t.test("supports supplying a lookup function to the agent", t => {
+t.test('supports supplying a lookup function to the agent', t => {
   const url = `${base}redirect/301`
   let called = 0
-  function lookupSpy(hostname, options, callback) {
+  function lookupSpy (hostname, options, callback) {
     called++
     return lookup(hostname, options, callback)
   }
@@ -1655,11 +1652,11 @@ t.test("supports supplying a lookup function to the agent", t => {
   })
 })
 
-t.test("supports supplying a famliy option to the agent", t => {
+t.test('supports supplying a famliy option to the agent', t => {
   const url = `${base}redirect/301`
   const families = []
   const family = Symbol('family')
-  function lookupSpy(hostname, options, callback) {
+  function lookupSpy (hostname, options, callback) {
     families.push(options.family)
     return lookup(hostname, {}, callback)
   }
@@ -1673,23 +1670,23 @@ t.test('function supplying the agent', t => {
   const url = `${base}inspect`
 
   const agent = new http.Agent({
-    keepAlive: true
+    keepAlive: true,
   })
 
   let parsedURL
 
   return fetch(url, {
-    agent: function(_parsedURL) {
+    agent: function (_parsedURL) {
       parsedURL = _parsedURL
       return agent
-    }
+    },
   }).then(res => {
     return res.json()
   }).then(res => {
     // the agent provider should have been called
     t.equal(parsedURL.protocol, 'http:')
     // the agent we returned should have been used
-    t.equal(res.headers['connection'], 'keep-alive')
+    t.equal(res.headers.connection, 'keep-alive')
   })
 })
 
@@ -1706,41 +1703,41 @@ t.test('calculate content length and extract content type', t => {
   const streamRequest = new Request(url, {
     method: 'POST',
     body: streamBody,
-    size: 1024
+    size: 1024,
   })
 
-  let blobBody = new Blob([bodyContent], { type: 'text/plain' })
+  const blobBody = new Blob([bodyContent], { type: 'text/plain' })
   const blobRequest = new Request(url, {
     method: 'POST',
     body: blobBody,
-    size: 1024
+    size: 1024,
   })
 
-  let formBody = new FormData()
+  const formBody = new FormData()
   formBody.append('a', '1')
   const formRequest = new Request(url, {
     method: 'POST',
     body: formBody,
-    size: 1024
+    size: 1024,
   })
 
-  let bufferBody = Buffer.from(bodyContent)
+  const bufferBody = Buffer.from(bodyContent)
   const bufferRequest = new Request(url, {
     method: 'POST',
     body: bufferBody,
-    size: 1024
+    size: 1024,
   })
 
   const stringRequest = new Request(url, {
     method: 'POST',
     body: bodyContent,
-    size: 1024
+    size: 1024,
   })
 
   const nullRequest = new Request(url, {
     method: 'GET',
     body: null,
-    size: 1024
+    size: 1024,
   })
 
   t.equal(getTotalBytes(streamRequest), null)
@@ -1764,7 +1761,8 @@ t.test('with optional `encoding`', t => {
     fetch(`${base}encoding/euc-jp`).then(res => {
       t.equal(res.status, 200)
       return res.text().then(result =>
-        t.equal(result, '<?xml version="1.0" encoding="EUC-JP"?><title>\ufffd\ufffd\ufffd\u0738\ufffd</title>'))
+        t.equal(result, '<?xml version="1.0" encoding="EUC-JP"?>' +
+          '<title>\ufffd\ufffd\ufffd\u0738\ufffd</title>'))
     }))
 
   t.test('encoding decode, xml dtd detect', t =>
@@ -1792,7 +1790,8 @@ t.test('with optional `encoding`', t => {
     fetch(`${base}encoding/gb2312`).then(res => {
       t.equal(res.status, 200)
       return res.textConverted().then(result => {
-        t.equal(result, '<meta http-equiv="Content-Type" content="text/html; charset=gb2312"><div>中文</div>')
+        t.equal(result, '<meta http-equiv="Content-Type" content="text/html; charset=gb2312">' +
+          '<div>中文</div>')
       })
     }))
 
@@ -1800,7 +1799,8 @@ t.test('with optional `encoding`', t => {
     fetch(`${base}encoding/gb2312-reverse`).then(res => {
       t.equal(res.status, 200)
       return res.textConverted().then(result => {
-        t.equal(result, '<meta content="text/html; charset=gb2312" http-equiv="Content-Type"><div>中文</div>')
+        t.equal(result, '<meta content="text/html; charset=gb2312" http-equiv="Content-Type">' +
+          '<div>中文</div>')
       })
     }))
 
@@ -1835,7 +1835,8 @@ t.test('with optional `encoding`', t => {
       t.equal(res.status, 200)
       const padding = 'a'.repeat(10)
       return res.textConverted().then(result => {
-        t.equal(result, `${padding}<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS" /><div>日本語</div>`)
+        t.equal(result, `${padding}<meta http-equiv="Content-Type" content="text/html;` +
+          ' charset=Shift_JIS" /><div>日本語</div>')
       })
     })
   })
@@ -1879,8 +1880,8 @@ t.test('redirect changes host header', t =>
     redirect: 'follow',
     headers: { host: 'foo' },
   })
-  .then(r => r.text())
-  .then(text => t.equal(text, `${base}host-redirect`)))
+    .then(r => r.text())
+    .then(text => t.equal(text, `${base}host-redirect`)))
 
 t.test('never apply backpressure to the underlying response stream', t => {
   const http = require('http')

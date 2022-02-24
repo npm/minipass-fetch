@@ -1,10 +1,11 @@
 const https = require('https')
-const {readFileSync: read} = require('fs')
-const ca = read(__dirname + '/minipass-CA.pem')
+const { readFileSync: read } = require('fs')
+const { join } = require('path')
+const ca = read(join(__dirname, '/minipass-CA.pem'))
 const server = https.createServer({
-  key: read(__dirname + '/localhost.key'),
-  cert: read(__dirname + '/localhost.crt'),
-}, (q,s) => {
+  key: read(join(__dirname, '/localhost.key')),
+  cert: read(join(__dirname, '/localhost.crt')),
+}, (q, s) => {
   s.end('ok\n' + JSON.stringify(q.headers, 0, 2) + '\n')
   server.close()
 })
