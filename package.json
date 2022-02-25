@@ -38,7 +38,7 @@
     "minizlib": "^2.1.2"
   },
   "optionalDependencies": {
-    "encoding": "^0.1.12"
+    "encoding": "^0.1.13"
   },
   "repository": {
     "type": "git",
