@@ -30,7 +30,7 @@
     "parted": "^0.1.1",
     "string-to-arraybuffer": "^1.0.2",
     "tap": "^15.1.6",
-    "whatwg-url": "^7.0.0"
+    "whatwg-url": "^11.0.0"
   },
   "dependencies": {
     "minipass": "^3.1.6",
