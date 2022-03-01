@@ -1,5 +1,18 @@
 # Changelog
 
+### [2.0.1](https://www.github.com/npm/minipass-fetch/compare/v2.0.0...v2.0.1) (2022-03-01)
+
+
+### Bug Fixes
+
+* [#18](https://www.github.com/npm/minipass-fetch/issues/18) ([3a11fe4](https://www.github.com/npm/minipass-fetch/commit/3a11fe4c18587b61d4e212d332338bd3427f5894))
+* Handle data: URIs more consistently ([#19](https://www.github.com/npm/minipass-fetch/issues/19)) ([3a11fe4](https://www.github.com/npm/minipass-fetch/commit/3a11fe4c18587b61d4e212d332338bd3427f5894)), closes [#18](https://www.github.com/npm/minipass-fetch/issues/18)
+
+
+### Dependencies
+
+* update encoding requirement from ^0.1.12 to ^0.1.13 ([#34](https://www.github.com/npm/minipass-fetch/issues/34)) ([65602ff](https://www.github.com/npm/minipass-fetch/commit/65602ffed38947efb13e907a165ebde22423cac9))
+
 ## [2.0.0](https://www.github.com/npm/minipass-fetch/compare/v1.4.1...v2.0.0) (2022-02-24)
 
 
