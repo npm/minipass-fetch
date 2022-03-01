@@ -1872,10 +1872,65 @@ t.test('data uri', t => {
 
   t.test('reject invalid data uri', t =>
     t.rejects(fetch(invalidDataUrl), {
-      message: 'invalid URL',
+      message: 'invalid data: URI',
+    }))
+
+  t.test('data uri not base64 encoded', t =>
+    fetch('data:text/plain,hello, world!').then(r => {
+      t.equal(r.status, 200)
+      t.equal(r.headers.get('Content-Type'), 'text/plain')
+      return r.buffer().then(b => t.equal(b.toString(), 'hello, world!'))
+    }))
+
+  t.test('data uri with no type specified', t =>
+    fetch('data:,hello,%20world!').then(r => {
+      t.equal(r.status, 200)
+      t.equal(r.headers.get('Content-Type'), null)
+      return r.buffer().then(b => t.equal(b.toString(), 'hello, world!'))
+    }))
+
+  t.test('search included, hash not included', t =>
+    fetch('data:,hello?with=search#no%20hash').then(r => {
+      t.equal(r.status, 200)
+      t.equal(r.headers.get('Content-Type'), null)
+      return r.buffer().then(b => t.equal(b.toString(), 'hello?with=search'))
     }))
 
   t.end()
+})
+
+t.test('aborting data uris', t => {
+  const controllers = [AbortController, AbortController2]
+  t.plan(controllers.length)
+  const url = 'data:text/plain;base64,SGVsbG8sIFdvcmxkIQ=='
+  controllers.forEach((Controller, idx) => {
+    t.test(`controller ${idx}`, async t => {
+      t.test('pre-abort', async t => {
+        const controller = new Controller()
+        controller.abort()
+        t.rejects(fetch(url, { signal: controller.signal }), {
+          message: 'The user aborted a request.',
+        })
+      })
+
+      t.test('post-abort', async t => {
+        const controller = new Controller()
+        t.rejects(fetch(url, { signal: controller.signal }), {
+          message: 'The user aborted a request.',
+        })
+        controller.abort()
+      })
+
+      t.test('cannot abort after first tick', t => {
+        const controller = new Controller()
+        t.resolves(fetch(url, { signal: controller.signal }))
+        Promise.resolve().then(() => {
+          controller.abort()
+          t.end()
+        })
+      })
+    })
+  })
 })
 
 t.test('redirect changes host header', t =>
