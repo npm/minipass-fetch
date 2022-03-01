@@ -4,7 +4,6 @@ const TestServer = require('./fixtures/server.js')
 const fetch = require('../lib/index.js')
 const stringToArrayBuffer = require('string-to-arraybuffer')
 const URLSearchParamsPolyfill = require('@ungap/url-search-params')
-const { URL } = require('whatwg-url')
 const { FetchError, Headers, Request, Response } = fetch
 const FetchErrorOrig = require('../lib/fetch-error.js')
 const HeadersOrig = require('../lib/headers.js')
@@ -24,7 +23,7 @@ const fs = require('fs')
 const http = require('http')
 // use of url.parse here is intentional and for coverage purposes
 // eslint-disable-next-line node/no-deprecated-api
-const { parse: parseURL, URLSearchParams, URL: CoreURL } = require('url')
+const { parse: parseURL, URLSearchParams } = require('url')
 
 const vm = require('vm')
 const {
@@ -1519,17 +1518,6 @@ t.test('fetch with Node.js legacy URL object', t => {
 })
 
 t.test('fetch with Node.js URL object', t => {
-  const url = `${base}hello`
-  const urlObj = new CoreURL(url)
-  const req = new Request(urlObj)
-  return fetch(req).then(res => {
-    t.equal(res.url, url)
-    t.equal(res.ok, true)
-    t.equal(res.status, 200)
-  })
-})
-
-t.test('fetch with WHATWG URL object', t => {
   const url = `${base}hello`
   const urlObj = new URL(url)
   const req = new Request(urlObj)
