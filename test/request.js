@@ -398,6 +398,15 @@ t.test('get node request options', t => {
     family: 6,
   })
 
+  t.test('passes through search params', (t) => {
+    const req = new Request('http://x.y?one=two&three=four')
+    const options = Request.getNodeRequestOptions(req)
+    t.match(options, {
+      path: '/?one=two&three=four',
+    })
+    t.end()
+  })
+
   t.test('function as agent', t => {
     let agentCalled = false
     const agent = () => {
