@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.0.2](https://www.github.com/npm/minipass-fetch/compare/v2.0.1...v2.0.2) (2022-03-02)
+
+
+### Bug Fixes
+
+* pass search params as part of path string ([#40](https://www.github.com/npm/minipass-fetch/issues/40)) ([404ad4c](https://www.github.com/npm/minipass-fetch/commit/404ad4cf1a2c21563205bee21ca1ef785b31c72f))
+
 ### [2.0.1](https://www.github.com/npm/minipass-fetch/compare/v2.0.0...v2.0.1) (2022-03-01)
 
 
