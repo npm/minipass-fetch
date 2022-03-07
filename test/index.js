@@ -1045,6 +1045,15 @@ t.test('POST with form-data as body', t => {
 })
 
 t.test('POST with form-data using stream as body', t => {
+  t.teardown(() => {
+    const root = path.dirname(__dirname)
+    // parted's multipart form parser writes a temporary file to disk, this removes it
+    fs.readdirSync(root).filter((file) => {
+      return file.startsWith('dummy.') && file.endsWith('.txt')
+    }).forEach((file) => {
+      fs.unlinkSync(path.join(root, file))
+    })
+  })
   const form = new FormData()
   form.append('my_field', fs.createReadStream(path.join(__dirname, 'fixtures/dummy.txt')))
 
