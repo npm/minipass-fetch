@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.0.3](https://www.github.com/npm/minipass-fetch/compare/v2.0.2...v2.0.3) (2022-03-08)
+
+
+### Bug Fixes
+
+* strip authorization and cookie headers on redirect to new host ([#45](https://www.github.com/npm/minipass-fetch/issues/45)) ([50d919a](https://www.github.com/npm/minipass-fetch/commit/50d919aafce3b95a8237a6e2dc93ae7e4215650f))
+
 ### [2.0.2](https://www.github.com/npm/minipass-fetch/compare/v2.0.1...v2.0.2) (2022-03-02)
 
 
