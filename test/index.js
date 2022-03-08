@@ -24,6 +24,7 @@ const http = require('http')
 // use of url.parse here is intentional and for coverage purposes
 // eslint-disable-next-line node/no-deprecated-api
 const { parse: parseURL, URLSearchParams } = require('url')
+const nock = require('nock')
 
 const vm = require('vm')
 const {
@@ -182,6 +183,42 @@ t.test('follow redirects', t => {
       t.equal(res.status, 200)
       t.equal(res.ok, true)
     })))
+})
+
+t.test('redirect to different host strips headers', async (t) => {
+  nock.disableNetConnect()
+  t.teardown(() => {
+    nock.cleanAll()
+    nock.enableNetConnect()
+  })
+
+  const first = nock('http://x.y', {
+    reqheaders: {
+      authorization: 'totally-authed-request',
+      cookie: 'fake-cookie',
+    },
+  })
+    .get('/')
+    .reply(301, null, { location: 'http://a.b' })
+
+  const second = nock('http://a.b', {
+    badheaders: ['authorization', 'cookie'],
+  })
+    .get('/')
+    .reply(200)
+
+  const res = await fetch('http://x.y', {
+    headers: {
+      authorization: 'totally-authed-request',
+      cookie: 'fake-cookie',
+    },
+  })
+  await res.text() // drain the response stream
+
+  t.ok(first.isDone(), 'initial request made')
+  t.ok(second.isDone(), 'redirect followed')
+  t.equal(res.status, 200)
+  t.ok(res.ok)
 })
 
 t.test('follow POST request redirect with GET', t => {
@@ -1045,6 +1082,15 @@ t.test('POST with form-data as body', t => {
 })
 
 t.test('POST with form-data using stream as body', t => {
+  t.teardown(() => {
+    const root = path.dirname(__dirname)
+    // parted's multipart form parser writes a temporary file to disk, this removes it
+    fs.readdirSync(root).filter((file) => {
+      return file.startsWith('dummy.') && file.endsWith('.txt')
+    }).forEach((file) => {
+      fs.unlinkSync(path.join(root, file))
+    })
+  })
   const form = new FormData()
   form.append('my_field', fs.createReadStream(path.join(__dirname, 'fixtures/dummy.txt')))
 
