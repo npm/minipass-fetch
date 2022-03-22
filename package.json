@@ -31,7 +31,7 @@
     "nock": "^13.2.4",
     "parted": "^0.1.1",
     "string-to-arraybuffer": "^1.0.2",
-    "tap": "^15.1.6"
+    "tap": "^16.0.0"
   },
   "dependencies": {
     "minipass": "^3.1.6",
