@@ -102,7 +102,7 @@ t.test('buffer body', async t => {
   const b = new Body(Buffer.from('a=1'))
   t.equal(b.body.toString(), 'a=1')
   t.equal(Body.extractContentType(b.body), null)
-  t.equal(await b.arrayBuffer().then(b => Buffer.from(b).toString()), 'a=1')
+  t.equal(await b.arrayBuffer().then(buf => Buffer.from(buf).toString()), 'a=1')
 })
 
 t.test('array buffer body', async t => {
