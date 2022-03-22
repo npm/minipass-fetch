@@ -22,7 +22,7 @@
     "check-coverage": true
   },
   "devDependencies": {
-    "@npmcli/template-oss": "^2.9.2",
+    "@npmcli/template-oss": "^3.1.2",
     "@ungap/url-search-params": "^0.2.2",
     "abort-controller": "^3.0.0",
     "abortcontroller-polyfill": "~1.7.3",
