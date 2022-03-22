@@ -1468,10 +1468,10 @@ t.test('clone a json response, and then log it as text response', t => {
   const url = `${base}json`
   return fetch(url).then(res => {
     const r1 = res.clone()
-    return res.json().then(result => {
-      t.same(result, { name: 'value' })
-      return r1.text().then(result => {
-        t.equal(result, '{"name":"value"}')
+    return res.json().then(jsonResult => {
+      t.same(jsonResult, { name: 'value' })
+      return r1.text().then(textResult => {
+        t.equal(textResult, '{"name":"value"}')
       })
     })
   })
@@ -1481,10 +1481,10 @@ t.test('clone a json response, first log as text response, then return json obje
   const url = `${base}json`
   return fetch(url).then(res => {
     const r1 = res.clone()
-    return r1.text().then(result => {
-      t.equal(result, '{"name":"value"}')
-      return res.json().then(result => {
-        t.same(result, { name: 'value' })
+    return r1.text().then(textResult => {
+      t.equal(textResult, '{"name":"value"}')
+      return res.json().then(jsonResult => {
+        t.same(jsonResult, { name: 'value' })
       })
     })
   })
@@ -1608,10 +1608,10 @@ t.test('blob round-trip', t => {
   let length, type
 
   return fetch(url).then(res => res.blob()).then(blob => {
-    const url = `${base}inspect`
+    const inspectUrl = `${base}inspect`
     length = blob.size
     type = blob.type
-    return fetch(url, {
+    return fetch(inspectUrl, {
       method: 'POST',
       body: blob,
     })
@@ -1988,20 +1988,19 @@ t.test('redirect changes host header', t =>
     .then(text => t.equal(text, `${base}host-redirect`)))
 
 t.test('never apply backpressure to the underlying response stream', t => {
-  const http = require('http')
   const { request } = http
   t.teardown(() => http.request = request)
   http.request = (...args) => {
     const req = request(...args)
     const { emit } = req
-    req.emit = (ev, ...args) => {
+    req.emit = (ev, ...emitArgs) => {
       if (ev === 'response') {
-        const res = args[0]
+        const res = emitArgs[0]
         res.pause = () => {
           throw new Error('should not pause the response')
         }
       }
-      return emit.call(req, ev, ...args)
+      return emit.call(req, ev, ...emitArgs)
     }
     return req
   }
