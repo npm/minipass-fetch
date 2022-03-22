@@ -4,7 +4,8 @@ const TestServer = require('./fixtures/server.js')
 const fetch = require('../lib/index.js')
 const stringToArrayBuffer = require('string-to-arraybuffer')
 const URLSearchParamsPolyfill = require('@ungap/url-search-params')
-const { FetchError, Headers, Request, Response } = fetch
+const { AbortError, FetchError, Headers, Request, Response } = fetch
+const AbortErrorOrig = require('../lib/abort-error.js')
 const FetchErrorOrig = require('../lib/fetch-error.js')
 const HeadersOrig = require('../lib/headers.js')
 const { createHeadersLenient } = HeadersOrig
@@ -80,7 +81,8 @@ t.test('return a promise', t => {
   t.end()
 })
 
-t.test('expose Headers, Response and Request constructors', t => {
+t.test('expose AbortError, FetchError, Headers, Response and Request constructors', t => {
+  t.equal(AbortError, AbortErrorOrig)
   t.equal(FetchError, FetchErrorOrig)
   t.equal(Headers, HeadersOrig)
   t.equal(Response, ResponseOrig)
