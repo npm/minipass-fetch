@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/npm/minipass-fetch/compare/v2.0.3...v2.1.0) (2022-03-24)
+
+
+### Features
+
+* expose AbortError directly ([ed9d420](https://github.com/npm/minipass-fetch/commit/ed9d42026676a32e126e867186e2578e78e963f4))
+
+
+### Bug Fixes
+
+* do not setup the response timeout if the stream has already ended ([#53](https://github.com/npm/minipass-fetch/issues/53)) ([0feea3c](https://github.com/npm/minipass-fetch/commit/0feea3cf399b6a1888f3cf3292a12675c2306b4d))
+
 ### [2.0.3](https://www.github.com/npm/minipass-fetch/compare/v2.0.2...v2.0.3) (2022-03-08)
 
 
