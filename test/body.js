@@ -176,6 +176,33 @@ t.test('stream body too slow', async t => {
   })
 })
 
+t.test('no timeout if stream ends before we even start consuming', async t => {
+  // this test mimics how lib/index.js writes data into the intermediary minipass stream
+
+  // the SlowMinipass class delays the result from concat() mimicking a slow pipe downstream
+  class SlowMinipass extends Minipass {
+    async concat () {
+      // 10 millisecond delay before resolving
+      await new Promise((resolve) => setTimeout(resolve, 10))
+      return super.concat()
+    }
+  }
+  const networkStream = new Minipass()
+  const wrappedStream = new SlowMinipass()
+
+  networkStream.on('data', (chunk) => wrappedStream.write(chunk))
+  networkStream.on('end', () => wrappedStream.end())
+
+  for (let i = 0; i < 10; ++i) {
+    networkStream.write('some data')
+  }
+  networkStream.end()
+
+  // timeout of 1ms, must be lower than the 10ms used in SlowMinipass to trigger the bug
+  const b = new Body(wrappedStream, { timeout: 1 })
+  await t.resolves(b.text(), 'some data')
+})
+
 t.test('random toString-ing thing body', async t => {
   const b = new Body({ toString () {
     return 'a=1'
