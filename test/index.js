@@ -379,6 +379,29 @@ t.test('treat broken redirect as ordinary response (manual)', t => {
   })
 })
 
+t.test('should process an invalid redirect (manual)', t => {
+  const url = `${base}redirect/301/invalid`
+  const options = {
+    redirect: 'manual',
+  }
+  return fetch(url, options).then(res => {
+    t.equal(res.url, url)
+    t.equal(res.status, 301)
+    t.equal(res.headers.get('location'), '//super:invalid:url%/')
+  })
+})
+
+t.test('should throw an error on invalid redirect url', t => {
+  const url = `${base}redirect/301/invalid`
+  return fetch(url).then(res => {
+    t.fail()
+  }).catch((err) => {
+    t.type(err, FetchError)
+    t.equal(err.message, 'uri requested responds with an invalid redirect URL: //super:invalid:url%/')
+  })
+})
+
+
 t.test('set redirected property on response when redirect', t =>
   fetch(`${base}redirect/301`).then(res => t.equal(res.redirected, true)))
 
