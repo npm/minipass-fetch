@@ -136,18 +136,17 @@ t.test('should support parsing headers', t => {
   t.end()
 })
 
-t.test('should support arrayBuffer() method', t => {
+t.test('should support arrayBuffer() method', async t => {
   const url = base
   var req = new Request(url, {
     method: 'POST',
     body: 'a=1',
   })
   t.equal(req.url, url)
-  return req.arrayBuffer().then(function (result) {
-    t.type(result, ArrayBuffer)
-    const str = String.fromCharCode.apply(null, new Uint8Array(result))
-    t.equal(str, 'a=1')
-  })
+  const result = await req.arrayBuffer()
+  t.type(result, ArrayBuffer)
+  const str = String.fromCharCode.apply(null, new Uint8Array(result))
+  t.equal(str, 'a=1')
 })
 
 t.test('should support text() method', t => {
@@ -180,21 +179,20 @@ t.test('should support buffer() method', t => {
   return req.buffer().then(result => t.equal(result.toString(), 'a=1'))
 })
 
-t.test('should support blob() method', t => {
+t.test('should support blob() method', async t => {
   const url = base
   var req = new Request(url, {
     method: 'POST',
     body: Buffer.from('a=1'),
   })
   t.equal(req.url, url)
-  return req.blob().then(function (result) {
-    t.type(result, Blob)
-    t.equal(result.size, 3)
-    t.equal(result.type, '')
-  })
+  const result = await req.blob()
+  t.type(result, Blob)
+  t.equal(result.size, 3)
+  t.equal(result.type, '')
 })
 
-t.test('should support clone() method', t => {
+t.test('should support clone() method', async t => {
   const url = base
   const r = new Minipass().end('a=1')
   r.pause()
@@ -227,10 +225,9 @@ t.test('should support clone() method', t => {
   t.equal(cl.signal, signal)
   // clone body shouldn't be the same body
   t.not(cl.body, body)
-  return Promise.all([cl.text(), req.text()]).then(results => {
-    t.equal(results[0], 'a=1')
-    t.equal(results[1], 'a=1')
-  })
+  const results = await Promise.all([cl.text(), req.text()])
+  t.equal(results[0], 'a=1')
+  t.equal(results[1], 'a=1')
 })
 
 t.test('should support ArrayBuffer as body', t => {

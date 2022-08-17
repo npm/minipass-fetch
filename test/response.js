@@ -69,17 +69,17 @@ t.test('should support buffer() method', t =>
   new Response('a=1').buffer().then(result =>
     t.equal(result.toString(), 'a=1')))
 
-t.test('should support blob() method', t =>
-  new Response('a=1', {
+t.test('should support blob() method', async t => {
+  const result = await new Response('a=1', {
     method: 'POST',
     headers: {
       'Content-Type': 'text/plain',
     },
-  }).blob().then(result => {
-    t.type(result, Blob)
-    t.equal(result.size, 3)
-    t.equal(result.type, 'text/plain')
-  }))
+  }).blob()
+  t.type(result, Blob)
+  t.equal(result.size, 3)
+  t.equal(result.type, 'text/plain')
+})
 
 t.test('should support clone() method', t => {
   const r = new Minipass().end('a=1')
@@ -155,15 +155,14 @@ t.test('should default to empty string as url', t => {
   t.end()
 })
 
-t.test('trailers in response option', t => {
+t.test('trailers in response option', async t => {
   const Headers = require('../lib/headers.js')
   const res = new Response(null, {
     trailer: Headers.createHeadersLenient({
       'X-Node-Fetch': 'hello world!',
     }),
   })
-  return res.trailer.then(trailers => {
-    t.same(Array.from(trailers.keys()), ['x-node-fetch'])
-    t.equal(trailers.get('x-node-fetch'), 'hello world!')
-  })
+  const trailers = await res.trailer
+  t.same(Array.from(trailers.keys()), ['x-node-fetch'])
+  t.equal(trailers.get('x-node-fetch'), 'hello world!')
 })

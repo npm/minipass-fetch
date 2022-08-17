@@ -61,6 +61,7 @@ class TestServer {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/plain')
       res.setHeader('Content-Encoding', 'gzip')
+      // eslint-disable-next-line promise/catch-or-return
       new zlib.Gzip().end('hello world').concat().then(buf => res.end(buf))
     }
 
@@ -68,6 +69,7 @@ class TestServer {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/plain')
       res.setHeader('Content-Encoding', 'gzip')
+      // eslint-disable-next-line promise/catch-or-return
       new zlib.Gzip().end('hello world').concat().then(buf =>
         res.end(buf.slice(0, buf.length - 8)))
     }
@@ -76,6 +78,7 @@ class TestServer {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/plain')
       res.setHeader('Content-Encoding', 'deflate')
+      // eslint-disable-next-line promise/catch-or-return
       new zlib.Deflate().end('hello world').concat().then(buf => res.end(buf))
     }
 
@@ -96,6 +99,7 @@ class TestServer {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/plain')
       res.setHeader('Content-Encoding', 'deflate')
+      // eslint-disable-next-line promise/catch-or-return
       new zlib.DeflateRaw().end('hello world').concat().then(buf => res.end(buf))
     }
 
