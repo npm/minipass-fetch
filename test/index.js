@@ -1982,7 +1982,7 @@ t.test('aborting data uris', t => {
 })
 
 t.test('redirect changes host header', t =>
-  fetch(`http://127.0.0.1:${local.port}/host-redirect`, {
+  fetch(`http://${local.hostname}:${local.port}/host-redirect`, {
     redirect: 'follow',
     headers: { host: 'foo' },
   })
