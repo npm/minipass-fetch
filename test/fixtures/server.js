@@ -1,11 +1,7 @@
 const http = require('http')
 const zlib = require('minizlib')
 const { multipart: Multipart } = require('parted')
-
-let convert
-try {
-  convert = require('encoding').convert
-} catch (e) {}
+const convert = require('encoding').convert
 
 class TestServer {
   constructor () {

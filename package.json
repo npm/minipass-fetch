@@ -27,6 +27,7 @@
     "@ungap/url-search-params": "^0.2.2",
     "abort-controller": "^3.0.0",
     "abortcontroller-polyfill": "~1.7.3",
+    "encoding": "^0.1.13",
     "form-data": "^4.0.0",
     "nock": "^13.2.4",
     "parted": "^0.1.1",
