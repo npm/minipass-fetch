@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/npm/minipass-fetch/compare/v2.1.0...v2.1.1) (2022-08-17)
+
+
+### Bug Fixes
+
+* linting ([d2045cb](https://github.com/npm/minipass-fetch/commit/d2045cb25afb77e8c8f5c7551209922a16d5b215))
+
 ## [2.1.0](https://github.com/npm/minipass-fetch/compare/v2.0.3...v2.1.0) (2022-03-24)
 
 
