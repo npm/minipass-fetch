@@ -253,13 +253,25 @@ t.test('more static method coverage', async t => {
   t.equal(Body.getTotalBytes({ body: {} }), null)
 })
 
-t.test('json', async t => {
+t.test('json FetchError', async t => {
   t.same(await new Body('{"a":1}').json(), { a: 1 })
   await t.rejects(Object.assign(new Body('a=1'), { url: 'asdf' }).json(), {
     name: 'FetchError',
     message: 'invalid json response body at asdf reason: ' +
       'Unexpected token a in JSON at position 0',
     type: 'invalid-json',
+  })
+})
+
+t.test('json body error', async t => {
+  const s = new PassThrough()
+  const b = new Body(s)
+  b.url = 'xyz'
+  setTimeout(() => s.emit('error', new RangeError('hello')))
+  await t.rejects(b.json(), {
+    name: 'FetchError',
+    message: 'Could not create Buffer from response body for xyz: hello',
+    type: 'system',
   })
 })
 
