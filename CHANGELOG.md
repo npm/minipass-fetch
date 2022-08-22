@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/npm/minipass-fetch/compare/v2.1.1...v2.1.2) (2022-08-22)
+
+
+### Bug Fixes
+
+* **json:** don't catch body errors ([#64](https://github.com/npm/minipass-fetch/issues/64)) ([9658a0a](https://github.com/npm/minipass-fetch/commit/9658a0a60349b38e62011a22ab6e9079c4319e98))
+
 ## [2.1.1](https://github.com/npm/minipass-fetch/compare/v2.1.0...v2.1.1) (2022-08-17)
 
 
