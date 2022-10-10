@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.0.0](https://github.com/npm/minipass-fetch/compare/v2.1.2...v3.0.0) (2022-10-10)
+
+### ⚠️ BREAKING CHANGES
+
+* `minipass-fetch` is now compatible with the following semver range for node: `^14.17.0 || ^16.13.0 || >=18.0.0`
+
+### Features
+
+* [`144dc38`](https://github.com/npm/minipass-fetch/commit/144dc38eb2e3be72ed916d426fc0063bd6cfacd4) [#74](https://github.com/npm/minipass-fetch/pull/74) postinstall for dependabot template-oss PR (@lukekarrys)
+
 ## [2.1.2](https://github.com/npm/minipass-fetch/compare/v2.1.1...v2.1.2) (2022-08-22)
 
 
