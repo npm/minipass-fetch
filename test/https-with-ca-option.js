@@ -1,34 +1,36 @@
 // verify that passing a custom CA cert will work with minipass-fetch
 // Ie, going a different direction than the decision node-fetch made
 // https://github.com/node-fetch/node-fetch/issues/15
-const t = require('tap')
-const fetch = require('../')
-const { resolve } = require('path')
-const fixtures = resolve(__dirname, 'fixtures/tls')
-const { readFileSync: read } = require('fs')
 
-const ca = read(`${fixtures}/minipass-CA.pem`)
-const cert = read(`${fixtures}/localhost.crt`)
-const key = read(`${fixtures}/localhost.key`)
+const t = require('tap')
+const { resolve } = require('path')
+const { readFileSync: read } = require('fs')
 const { createServer } = require('https')
+const fetch = require('../')
+
+const fixtures = resolve(__dirname, 'fixtures/tls')
 const port = 30000 + (+process.env.TAP_CHILD_ID || 1)
 const base = `https://localhost:${port}/`
+const ca = read(`${fixtures}/minipass-CA.pem`)
 
-t.test('setup server', { bail: true }, t => {
-  const server = createServer({
-    cert,
-    key,
+// If any of these tests fail with a "certificate expired" error, then
+// localhost.crt and localhost.key need to be regenerated with `npm run
+// test:tls-fixtures`.
+
+let server = null
+t.before(() => new Promise((res) => {
+  server = createServer({
+    cert: read(`${fixtures}/localhost.crt`),
+    key: read(`${fixtures}/localhost.key`),
   }, (q, s) => {
     s.setHeader('content-type', 'text/plain')
     s.setHeader('connection', 'close')
     s.end(`${q.method} ${q.url}`)
-  })
-  server.listen(port, () => {
-    t.parent.teardown(() => server.close())
-    t.end()
-  })
-})
+  }).listen(port, res)
+}))
+t.teardown(() => server.close())
 
+// this test will fail after Jan 30 23:23:26 2025 GMT
 t.test('make https request without ca, should fail', t =>
   t.rejects(fetch(`${base}hello`), {
     name: 'FetchError',

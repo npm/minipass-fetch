@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "scripts": {
+    "test:tls-fixtures": "./test/fixtures/tls/setup.sh",
     "test": "tap",
     "snap": "tap",
     "lint": "eslint \"**/*.js\"",
