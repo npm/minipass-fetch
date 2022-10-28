@@ -1,15 +1,21 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-if [ "$#" -ne 1 ]
-then
-  echo "Usage: Must supply a domain"
-  exit 1
-fi
 
-DOMAIN=$1
 
-openssl genrsa -out $DOMAIN.key 2048
-openssl req -new -key $DOMAIN.key -out $DOMAIN.csr
+DOMAIN=localhost
+CURRENT_DIR=$PWD;
+cd $(cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+trap 'cd "${CURRENT_DIR}"' EXIT
+
+rm -rf $DOMAIN.{crt,csr,ext,key}
+rm -rf .srl
+
+openssl req \
+  -nodes \
+  -newkey rsa:2048 \
+  -keyout $DOMAIN.key \
+  -out $DOMAIN.csr \
+  -subj "/CN=$DOMAIN"
 
 cat > $DOMAIN.ext << EOF
 authorityKeyIdentifier=keyid,issuer
@@ -20,4 +26,17 @@ subjectAltName = @alt_names
 DNS.1 = $DOMAIN
 EOF
 
-openssl x509 -req -in $DOMAIN.csr -CA ./minipass-CA.pem -CAkey ./minipass-CA.key -CAcreateserial -out $DOMAIN.crt -days 825 -sha256 -extfile $DOMAIN.ext
+openssl x509 \
+  -req \
+  -days 825 \
+  -sha256 \
+  -in $DOMAIN.csr \
+  -CA ./minipass-CA.pem \
+  -CAkey ./minipass-CA.key \
+  -CAcreateserial \
+  -out $DOMAIN.crt \
+  -extfile $DOMAIN.ext \
+  -passin pass:minipassphrase
+
+rm -rf $DOMAIN.{csr,ext}
+rm -rf .srl
