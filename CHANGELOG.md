@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/npm/minipass-fetch/compare/v3.0.1...v3.0.2) (2023-04-13)
+
+### Bug Fixes
+
+* [`3c40fdc`](https://github.com/npm/minipass-fetch/commit/3c40fdc8f179182bf9142b96e072a07bc9df746a) handle invalid redirect header in a response (#100) (@wraithgar, Mohammad macbook)
+* [`cc962bc`](https://github.com/npm/minipass-fetch/commit/cc962bc03337d2f189a72e5a521b85289398f45d) Support longer timeouts - Inform http/tls timeout of chosen timeout (@josh-hemphill)
+
 ## [3.0.1](https://github.com/npm/minipass-fetch/compare/v3.0.0...v3.0.1) (2022-12-07)
 
 ### Dependencies
