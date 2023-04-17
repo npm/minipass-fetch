@@ -3,7 +3,7 @@ const t = require('tap')
 const Response = require('../lib/response.js')
 const stringToArrayBuffer = require('string-to-arraybuffer')
 const Blob = require('../lib/blob.js')
-const Minipass = require('minipass')
+const { Minipass } = require('minipass')
 const base = `http://localhost:123456/`
 
 t.Test.prototype.addAssert('contain', 2, function (list, key, m, e) {
