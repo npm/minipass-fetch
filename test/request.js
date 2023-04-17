@@ -2,7 +2,7 @@
 const t = require('tap')
 const Request = require('../lib/request.js')
 const stringToArrayBuffer = require('string-to-arraybuffer')
-const Minipass = require('minipass')
+const { Minipass } = require('minipass')
 const base = 'http://localhost:12345/'
 const FormData = require('form-data')
 const { AbortController } = require('abortcontroller-polyfill/dist/abortcontroller')

@@ -37,7 +37,7 @@ const {
 const { spawn } = require('child_process')
 const path = require('path')
 
-const Minipass = require('minipass')
+const { Minipass } = require('minipass')
 const supportStreamDestroy = 'destroy' in Minipass.prototype
 
 const { AbortController } = require('abortcontroller-polyfill/dist/abortcontroller')
