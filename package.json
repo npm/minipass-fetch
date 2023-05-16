@@ -36,7 +36,7 @@
     "tap": "^16.0.0"
   },
   "dependencies": {
-    "minipass": "^5.0.0",
+    "minipass": "^6.0.1",
     "minipass-sized": "^1.0.3",
     "minizlib": "^2.1.2"
   },
