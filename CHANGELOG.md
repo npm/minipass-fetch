@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.0.4](https://github.com/npm/minipass-fetch/compare/v3.0.3...v3.0.4) (2023-08-14)
+
+### Dependencies
+
+* [`69e9e53`](https://github.com/npm/minipass-fetch/commit/69e9e534a7e44897baa33a29f68276767b1ab805) [#114](https://github.com/npm/minipass-fetch/pull/114) bump minipass from 5.0.0 to 7.0.3
+
 ## [3.0.3](https://github.com/npm/minipass-fetch/compare/v3.0.2...v3.0.3) (2023-04-26)
 
 ### Dependencies
