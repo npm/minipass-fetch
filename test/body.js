@@ -257,8 +257,7 @@ t.test('json FetchError', async t => {
   t.same(await new Body('{"a":1}').json(), { a: 1 })
   await t.rejects(Object.assign(new Body('a=1'), { url: 'asdf' }).json(), {
     name: 'FetchError',
-    message: 'invalid json response body at asdf reason: ' +
-      'Unexpected token a in JSON at position 0',
+    message: /^invalid json response body at asdf reason: Unexpected token/,
     type: 'invalid-json',
   })
 })

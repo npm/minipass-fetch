@@ -1671,7 +1671,7 @@ t.test('supports supplying a famliy option to the agent', async t => {
   const family = Symbol('family')
   function lookupSpy (hostname, options, callback) {
     families.push(options.family)
-    return lookup(hostname, {}, callback)
+    return lookup(hostname, { ...options, family: undefined }, callback)
   }
   const agent = http.Agent({ lookup: lookupSpy, family })
   await fetch(url, { agent })
