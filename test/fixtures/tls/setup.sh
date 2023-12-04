@@ -39,4 +39,4 @@ openssl x509 \
   -passin pass:minipassphrase
 
 rm -rf $DOMAIN.{csr,ext}
-rm -rf .srl
+rm -rf *.srl
