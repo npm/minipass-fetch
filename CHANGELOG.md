@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.0.5](https://github.com/npm/minipass-fetch/compare/v3.0.4...v3.0.5) (2023-12-07)
+
+### Chores
+
+* [`f5f6e20`](https://github.com/npm/minipass-fetch/commit/f5f6e20b35d240b8f3ec220ef7d221b1488ce294) [#140](https://github.com/npm/minipass-fetch/pull/140) postinstall for dependabot template-oss PR (@lukekarrys)
+* [`47738ea`](https://github.com/npm/minipass-fetch/commit/47738ead517dbd625a19365d0458e7be7d4eb8a3) [#140](https://github.com/npm/minipass-fetch/pull/140) bump @npmcli/template-oss from 4.21.1 to 4.21.3 (@dependabot[bot])
+* [`272e06e`](https://github.com/npm/minipass-fetch/commit/272e06e73fcd566c0446b3e235a996bb269c7e09) [#138](https://github.com/npm/minipass-fetch/pull/138) tests: correctly remove srl files when updating tls fixtures (#138) (@lukekarrys)
+* [`3d11e0f`](https://github.com/npm/minipass-fetch/commit/3d11e0f13107cde9c459f7344c8ab900eee158c7) [#136](https://github.com/npm/minipass-fetch/pull/136) postinstall for dependabot template-oss PR (@lukekarrys)
+* [`e87081c`](https://github.com/npm/minipass-fetch/commit/e87081ca9952a9693d345b650a551fd15e90194f) [#136](https://github.com/npm/minipass-fetch/pull/136) bump @npmcli/template-oss from 4.19.0 to 4.21.1 (@dependabot[bot])
+* [`250e493`](https://github.com/npm/minipass-fetch/commit/250e4936ea43cecb3d283183a49ca651cc6558d7) [#117](https://github.com/npm/minipass-fetch/pull/117) fix tests for node 20 (@lukekarrys)
+* [`fceed29`](https://github.com/npm/minipass-fetch/commit/fceed2913d7b1e881095b9505664a044a2e6b5b8) [#117](https://github.com/npm/minipass-fetch/pull/117) postinstall for dependabot template-oss PR (@lukekarrys)
+* [`5ae5b01`](https://github.com/npm/minipass-fetch/commit/5ae5b01d6873fec2fcef96d803d3fb7ec77e0d65) [#117](https://github.com/npm/minipass-fetch/pull/117) bump @npmcli/template-oss from 4.18.1 to 4.19.0 (@dependabot[bot])
+* [`e1f0f94`](https://github.com/npm/minipass-fetch/commit/e1f0f9441d956fc33e2f2ecd458465a769e23c39) [#116](https://github.com/npm/minipass-fetch/pull/116) postinstall for dependabot template-oss PR (@lukekarrys)
+* [`50429db`](https://github.com/npm/minipass-fetch/commit/50429db4f320b32c7d658bf1bbd68633dc11aef3) [#116](https://github.com/npm/minipass-fetch/pull/116) bump @npmcli/template-oss from 4.18.0 to 4.18.1 (@dependabot[bot])
+
 ## [3.0.4](https://github.com/npm/minipass-fetch/compare/v3.0.3...v3.0.4) (2023-08-14)
 
 ### Dependencies
