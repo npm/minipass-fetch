@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.0.5](https://github.com/npm/minipass-fetch/compare/v3.0.4...v3.0.5) (2024-04-21)
+
+### Chores
+
+* [`272e06e`](https://github.com/npm/minipass-fetch/commit/272e06e73fcd566c0446b3e235a996bb269c7e09) [#138](https://github.com/npm/minipass-fetch/pull/138) tests: correctly remove srl files when updating tls fixtures (#138) (@lukekarrys)
+* [`250e493`](https://github.com/npm/minipass-fetch/commit/250e4936ea43cecb3d283183a49ca651cc6558d7) [#117](https://github.com/npm/minipass-fetch/pull/117) fix tests for node 20 (@lukekarrys)
+* [`c389290`](https://github.com/npm/minipass-fetch/commit/c3892909c52e8145adb042dbca59942bc4fa7c4b) [#145](https://github.com/npm/minipass-fetch/pull/145) postinstall for dependabot template-oss PR (@lukekarrys)
+* [`765e4f4`](https://github.com/npm/minipass-fetch/commit/765e4f4edcabd43590184ad47f91838ddb3871fd) [#145](https://github.com/npm/minipass-fetch/pull/145) bump @npmcli/template-oss from 4.21.3 to 4.21.4 (@dependabot[bot])
+
 ## [3.0.4](https://github.com/npm/minipass-fetch/compare/v3.0.3...v3.0.4) (2023-08-14)
 
 ### Dependencies
