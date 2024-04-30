@@ -19,31 +19,37 @@ const ca = read(`${fixtures}/minipass-CA.pem`)
 
 let server = null
 t.before(() => new Promise((res) => {
-  server = createServer({
-    cert: read(`${fixtures}/localhost.crt`),
-    key: read(`${fixtures}/localhost.key`),
-  }, (q, s) => {
-    s.setHeader('content-type', 'text/plain')
-    s.setHeader('connection', 'close')
-    s.end(`${q.method} ${q.url}`)
-  }).listen(port, res)
+    server = createServer({
+        cert: read(`${fixtures}/localhost.crt`),
+        key: read(`${fixtures}/localhost.key`),
+    }, (q, s) => {
+        s.setHeader('content-type', 'text/plain')
+        s.setHeader('connection', 'close')
+        s.end(`${q.method} ${q.url}`)
+    }).listen(port, res)
 }))
 t.teardown(() => server.close())
 
 // this test will fail after Jan 30 23:23:26 2025 GMT
 t.test('make https request without ca, should fail', t =>
-  t.rejects(fetch(`${base}hello`), {
-    name: 'FetchError',
-    message: `request to ${base}hello failed, reason: unable to verify the first certificate`,
-    code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
-    errno: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
-    type: 'system',
-  }))
+    t.rejects(fetch(`${base}hello`), {
+        name: 'FetchError',
+        message: `request to ${base}hello failed, reason: unable to verify the first certificate`,
+        code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+        errno: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+        type: 'system',
+    }))
 
 t.test('make https request with rejectUnauthorized:false, succeeds', async t =>
-  t.equal(await (await fetch(`${base}hello`, { rejectUnauthorized: false })).text(),
-    'GET /hello'))
+    t.equal(await (await fetch(`${base}hello`, { rejectUnauthorized: false })).text(),
+        'GET /hello'))
+
+t.test("make https request with process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0', succeeds", async t => {
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
+    t.equal(await (await fetch(`${base}hello`)).text(), 'GET /hello')
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = undefined
+})
 
 t.test('make https request with ca, succeeds', async t =>
-  t.equal(await (await fetch(`${base}hello`, { ca })).text(),
-    'GET /hello'))
+    t.equal(await (await fetch(`${base}hello`, { ca })).text(),
+        'GET /hello'))
