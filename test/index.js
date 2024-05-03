@@ -843,7 +843,7 @@ t.test('cancel request body stream with AbortError when aborted', {
   })
 
   const result = Promise.all([
-    new Promise((resolve, reject) => {
+    new Promise((resolve) => {
       body.on('error', (error) => {
         t.match(error, { name: 'AbortError' })
         resolve()
