@@ -30,15 +30,32 @@ t.before(() => new Promise((res) => {
 }))
 t.teardown(() => server.close())
 
+const failure = {
+  name: 'FetchError',
+  message: `request to ${base}hello failed, reason: unable to verify the first certificate`,
+  code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+  errno: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+  type: 'system',
+}
+
 // this test will fail after Jan 30 23:23:26 2025 GMT
 t.test('make https request without ca, should fail', t =>
-  t.rejects(fetch(`${base}hello`), {
-    name: 'FetchError',
-    message: `request to ${base}hello failed, reason: unable to verify the first certificate`,
-    code: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
-    errno: 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
-    type: 'system',
-  }))
+  t.rejects(fetch(`${base}hello`), failure))
+
+t.test('make https request with NODE_TLS_REJECT_UNAUTHORIZED set to 1, should fail', async t => {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
+  t.rejects(fetch(`${base}hello`), failure)
+  delete process.env.NODE_TLS_REJECT_UNAUTHORIZED
+})
+
+t.test('make https request with rejectUnauthorized:true, should fail', async t =>
+  t.rejects(fetch(`${base}hello`, { rejectUnauthorized: true }), failure))
+
+t.test('make https request with NODE_TLS_REJECT_UNAUTHORIZED set to 0, succeeds', async t => {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+  t.equal(await (await fetch(`${base}hello`)).text(), 'GET /hello')
+  delete process.env.NODE_TLS_REJECT_UNAUTHORIZED
+})
 
 t.test('make https request with rejectUnauthorized:false, succeeds', async t =>
   t.equal(await (await fetch(`${base}hello`, { rejectUnauthorized: false })).text(),
