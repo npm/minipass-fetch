@@ -17,7 +17,7 @@ const ca = read(`${fixtures}/minipass-CA.pem`)
 // localhost.crt and localhost.key need to be regenerated with `npm run
 // test:tls-fixtures`.
 
-var server = null
+let server = null
 t.before(() => new Promise((res) => {
   server = createServer({
     cert: read(`${fixtures}/localhost.crt`),

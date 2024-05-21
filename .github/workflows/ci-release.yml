@@ -87,6 +87,7 @@ jobs:
             os: windows-latest
             shell: cmd
         node-version:
+          - 14.17.0
           - 14.x
           - 16.13.0
           - 16.x
@@ -95,6 +96,8 @@ jobs:
           - 20.x
           - 22.x
         exclude:
+          - platform: { name: macOS, os: macos-latest, shell: bash }
+            node-version: 14.17.0
           - platform: { name: macOS, os: macos-latest, shell: bash }
             node-version: 14.x
           - platform: { name: macOS, os: macos-13, shell: bash }
