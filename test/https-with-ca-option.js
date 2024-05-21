@@ -17,7 +17,7 @@ const ca = read(`${fixtures}/minipass-CA.pem`)
 // localhost.crt and localhost.key need to be regenerated with `npm run
 // test:tls-fixtures`.
 
-let server = null
+var server = null
 t.before(() => new Promise((res) => {
   server = createServer({
     cert: read(`${fixtures}/localhost.crt`),
@@ -28,6 +28,7 @@ t.before(() => new Promise((res) => {
     s.end(`${q.method} ${q.url}`)
   }).listen(port, res)
 }))
+
 t.teardown(() => server.close())
 
 const failure = {
@@ -39,28 +40,30 @@ const failure = {
 }
 
 // this test will fail after Jan 30 23:23:26 2025 GMT
-t.test('make https request without ca, should fail', t =>
-  t.rejects(fetch(`${base}hello`), failure))
+t.test('make https request without ca, should fail', t => {
+  t.rejects(fetch(`${base}hello`), failure)
+})
 
 t.test('make https request with NODE_TLS_REJECT_UNAUTHORIZED set to 1, should fail', async t => {
+  t.teardown(() => delete process.env.NODE_TLS_REJECT_UNAUTHORIZED)
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1'
-  t.rejects(fetch(`${base}hello`), failure)
-  delete process.env.NODE_TLS_REJECT_UNAUTHORIZED
+  await t.rejects(fetch(`${base}hello`), failure)
 })
 
-t.test('make https request with rejectUnauthorized:true, should fail', async t =>
-  t.rejects(fetch(`${base}hello`, { rejectUnauthorized: true }), failure))
+t.test('make https request with rejectUnauthorized:true, should fail', async t => {
+  t.rejects(fetch(`${base}hello`, { rejectUnauthorized: true }), failure)
+})
 
 t.test('make https request with NODE_TLS_REJECT_UNAUTHORIZED set to 0, succeeds', async t => {
+  t.teardown(() => delete process.env.NODE_TLS_REJECT_UNAUTHORIZED)
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
   t.equal(await (await fetch(`${base}hello`)).text(), 'GET /hello')
-  delete process.env.NODE_TLS_REJECT_UNAUTHORIZED
 })
 
-t.test('make https request with rejectUnauthorized:false, succeeds', async t =>
-  t.equal(await (await fetch(`${base}hello`, { rejectUnauthorized: false })).text(),
-    'GET /hello'))
+t.test('make https request with rejectUnauthorized:false, succeeds', async t => {
+  t.equal(await (await fetch(`${base}hello`, { rejectUnauthorized: false })).text(), 'GET /hello')
+})
 
-t.test('make https request with ca, succeeds', async t =>
-  t.equal(await (await fetch(`${base}hello`, { ca })).text(),
-    'GET /hello'))
+t.test('make https request with ca, succeeds', async t => {
+  t.equal(await (await fetch(`${base}hello`, { ca })).text(), 'GET /hello')
+})
