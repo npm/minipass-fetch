@@ -40,8 +40,8 @@ const failure = {
 }
 
 // this test will fail after Jan 30 23:23:26 2025 GMT
-t.test('make https request without ca, should fail', t => {
-  t.rejects(fetch(`${base}hello`), failure)
+t.test('make https request without ca, should fail', async t => {
+  await t.rejects(fetch(`${base}hello`), failure)
 })
 
 t.test('make https request with NODE_TLS_REJECT_UNAUTHORIZED set to 1, should fail', async t => {
@@ -51,7 +51,7 @@ t.test('make https request with NODE_TLS_REJECT_UNAUTHORIZED set to 1, should fa
 })
 
 t.test('make https request with rejectUnauthorized:true, should fail', async t => {
-  t.rejects(fetch(`${base}hello`, { rejectUnauthorized: true }), failure)
+  await t.rejects(fetch(`${base}hello`, { rejectUnauthorized: true }), failure)
 })
 
 t.test('make https request with NODE_TLS_REJECT_UNAUTHORIZED set to 0, succeeds', async t => {
