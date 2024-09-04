@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@npmcli/eslint-config": "^5.0.0",
-    "@npmcli/template-oss": "4.22.0",
+    "@npmcli/template-oss": "4.23.3",
     "@ungap/url-search-params": "^0.2.2",
     "abort-controller": "^3.0.0",
     "abortcontroller-polyfill": "~1.7.3",
