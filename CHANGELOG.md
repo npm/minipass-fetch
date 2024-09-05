@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.0.0](https://github.com/npm/minipass-fetch/compare/v3.0.5...v4.0.0) (2024-09-05)
+### ⚠️ BREAKING CHANGES
+* `minipass-fetch` now supports node `^18.17.0 || >=20.5.0`
+### Bug Fixes
+* [`1ce7c52`](https://github.com/npm/minipass-fetch/commit/1ce7c521ca6a895d7c7dda2adcce76d94ff10df0) [#161](https://github.com/npm/minipass-fetch/pull/161) align to npm 10 node engine range (@hashtagchris)
+### Dependencies
+* [`fddb214`](https://github.com/npm/minipass-fetch/commit/fddb214b731b6ae9c2c7da637c4596b15bdc965d) [#164](https://github.com/npm/minipass-fetch/pull/164) bump minizlib from 2.1.2 to 3.0.1 (@dependabot[bot])
+### Chores
+* [`f59d139`](https://github.com/npm/minipass-fetch/commit/f59d13935232e4b51475c35cc725bbbfb68af1a0) [#160](https://github.com/npm/minipass-fetch/pull/160) bump @npmcli/eslint-config from 4.0.5 to 5.0.0 (@dependabot[bot])
+* [`8e696c6`](https://github.com/npm/minipass-fetch/commit/8e696c65d764dcb8522ead4485a4fdbf915d443b) [#161](https://github.com/npm/minipass-fetch/pull/161) run template-oss-apply (@hashtagchris)
+* [`4a7fb89`](https://github.com/npm/minipass-fetch/commit/4a7fb89d3fd2e8477a854946e36ea129d18f1ceb) [#149](https://github.com/npm/minipass-fetch/pull/149) tests NODE_TLS_REJECT_UNAUTHORIZED (#149) (@reggi)
+* [`7f99262`](https://github.com/npm/minipass-fetch/commit/7f99262467913f2fdd08387759b2a396516f4bed) [#163](https://github.com/npm/minipass-fetch/pull/163) postinstall for dependabot template-oss PR (@hashtagchris)
+* [`21fcdc0`](https://github.com/npm/minipass-fetch/commit/21fcdc095ce1c808a70309f04016d554fade3308) [#163](https://github.com/npm/minipass-fetch/pull/163) bump @npmcli/template-oss from 4.22.0 to 4.23.3 (@dependabot[bot])
+
 ## [3.0.5](https://github.com/npm/minipass-fetch/compare/v3.0.4...v3.0.5) (2024-05-04)
 
 ### Bug Fixes
