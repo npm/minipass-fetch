@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.1](https://github.com/npm/minipass-fetch/compare/v4.0.0...v4.0.1) (2025-02-26)
+### Bug Fixes
+* [`f33ade0`](https://github.com/npm/minipass-fetch/commit/f33ade0260605b49057e01ef19dc3caa1a6a1c45) [#167](https://github.com/npm/minipass-fetch/pull/167) avoid deadlock in deflate-encoded responses (#167) (@liath)
+
 ## [4.0.0](https://github.com/npm/minipass-fetch/compare/v3.0.5...v4.0.0) (2024-09-05)
 ### ⚠️ BREAKING CHANGES
 * `minipass-fetch` now supports node `^18.17.0 || >=20.5.0`
