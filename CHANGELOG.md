@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.0.0](https://github.com/npm/minipass-fetch/compare/v4.0.1...v5.0.0) (2025-10-22)
+### ⚠️ BREAKING CHANGES
+* `minipass-fetch` now supports node `^20.17.0 || >=22.9.0`
+### Bug Fixes
+* [`c43be28`](https://github.com/npm/minipass-fetch/commit/c43be280321648ebcaea20638549961c5d7ec06e) [#174](https://github.com/npm/minipass-fetch/pull/174) regenerate cert for test fixtures (@owlstronaut)
+* [`9016609`](https://github.com/npm/minipass-fetch/commit/901660916c6a75fa6ad3ce53b8b4eebd368eab23) [#172](https://github.com/npm/minipass-fetch/pull/172) align to npm 11 node engine range (#172) (@owlstronaut)
+### Chores
+* [`425aa2f`](https://github.com/npm/minipass-fetch/commit/425aa2fbe981a422415d4bc2ef0fa47c29477041) [#171](https://github.com/npm/minipass-fetch/pull/171) bumping @npmcli/template-oss from 4.23.3 to 4.24.3 (#171) (@owlstronaut)
+
 ## [4.0.1](https://github.com/npm/minipass-fetch/compare/v4.0.0...v4.0.1) (2025-02-26)
 ### Bug Fixes
 * [`f33ade0`](https://github.com/npm/minipass-fetch/commit/f33ade0260605b49057e01ef19dc3caa1a6a1c45) [#167](https://github.com/npm/minipass-fetch/pull/167) avoid deadlock in deflate-encoded responses (#167) (@liath)
