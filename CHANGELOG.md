@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.0.1](https://github.com/npm/minipass-fetch/compare/v5.0.0...v5.0.1) (2026-02-02)
+### Bug Fixes
+* [`3eb015c`](https://github.com/npm/minipass-fetch/commit/3eb015cccfac4fdb6d60fde9717aba293e3897dc) [#180](https://github.com/npm/minipass-fetch/pull/180) use new minipass-sized correctly (#180) (@wraithgar)
+### Dependencies
+* [`041730e`](https://github.com/npm/minipass-fetch/commit/041730ebda948dc060d8583b9e57c0df4b4003fa) [#178](https://github.com/npm/minipass-fetch/pull/178) `minipass-sized@2.0.0` (#178)
+
 ## [5.0.0](https://github.com/npm/minipass-fetch/compare/v4.0.1...v5.0.0) (2025-10-22)
 ### ⚠️ BREAKING CHANGES
 * `minipass-fetch` now supports node `^20.17.0 || >=22.9.0`
