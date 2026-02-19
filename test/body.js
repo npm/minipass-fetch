@@ -10,6 +10,7 @@ const { Minipass } = require('minipass')
 const { MinipassSized } = require('minipass-sized')
 const AbortError = require('../lib/abort-error.js')
 const { PassThrough } = require('stream')
+const iconvLite = require('iconv-lite')
 
 t.test('null body', async t => {
   const b = new Body()
@@ -351,11 +352,9 @@ t.test('clone', t => {
 })
 
 t.test('convert body', t => {
-  const { convert } = require('encoding')
-
   t.test('content-type header', async t => {
     const s = '中文'
-    const b = new Body(convert(s, 'gbk'))
+    const b = new Body(iconvLite.encode(s, 'gbk'))
     b.headers = { get () {
       return 'text/plain; charset=gbk; qs=1'
     } }
@@ -364,37 +363,37 @@ t.test('convert body', t => {
 
   t.test('html4 meta tag', async t => {
     const s = '<meta http-equiv="Content-Type" content="text/html; charset=gbk"><div>中文L</div>'
-    const b = new Body(convert(s, 'gbk'))
+    const b = new Body(iconvLite.encode(s, 'gbk'))
     t.equal(await b.textConverted(), s)
   })
 
   t.test('html4 meta tag reversed', async t => {
     const s = '<meta content="text/html; charset=gbk" http-equiv="Content-Type"><div>中文L</div>'
-    const b = new Body(convert(s, 'gbk'))
+    const b = new Body(iconvLite.encode(s, 'gbk'))
     t.equal(await b.textConverted(), s)
   })
 
   t.test('html5 meta tag', async t => {
     const s = '<meta charset="gbk"><div>中文</div>'
-    const b = new Body(convert(s, 'gbk'))
+    const b = new Body(iconvLite.encode(s, 'gbk'))
     t.equal(await b.textConverted(), s)
   })
 
   t.test('xml encoding', async t => {
     const s = '<?xml encoding="gbk"?><div>中文</div>'
-    const b = new Body(convert(s, 'gbk'))
+    const b = new Body(iconvLite.encode(s, 'gbk'))
     t.equal(await b.textConverted(), s)
   })
 
   t.test('explicitly utf8', async t => {
     const s = '<?xml encoding="UTF-8"?><div>中文</div>'
-    const b = new Body(s)
+    const b = new Body(Buffer.from(s, 'UTF-8'))
     t.equal(await b.textConverted(), s)
   })
 
   t.test('no encoding set', async t => {
     const s = '中文'
-    const b = new Body(s)
+    const b = new Body(Buffer.from(s, 'UTF-8'))
     t.equal(await b.textConverted(), s)
   })
 

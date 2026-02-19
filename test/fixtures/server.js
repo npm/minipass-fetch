@@ -1,7 +1,7 @@
 const http = require('http')
 const zlib = require('minizlib')
 const { multipart: Multipart } = require('parted')
-const convert = require('encoding').convert
+const iconvLite = require('iconv-lite')
 
 class TestServer {
   constructor () {
@@ -154,33 +154,33 @@ class TestServer {
     if (p === '/encoding/gbk') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/html')
-      res.end(convert('<meta charset="gbk"><div>中文</div>', 'gbk'))
+      res.end(iconvLite.encode('<meta charset="gbk"><div>中文</div>', 'gbk'))
     }
 
     if (p === '/encoding/gb2312') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/html')
-      res.end(convert('<meta http-equiv="Content-Type" content="text/html; charset=gb2312">' +
+      res.end(iconvLite.encode('<meta http-equiv="Content-Type" content="text/html; charset=gb2312">' +
         '<div>中文</div>', 'gb2312'))
     }
 
     if (p === '/encoding/gb2312-reverse') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/html')
-      res.end(convert('<meta content="text/html; charset=gb2312" http-equiv="Content-Type">' +
+      res.end(iconvLite.encode('<meta content="text/html; charset=gb2312" http-equiv="Content-Type">' +
         '<div>中文</div>', 'gb2312'))
     }
 
     if (p === '/encoding/shift-jis') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/html; charset=Shift-JIS')
-      res.end(convert('<div>日本語</div>', 'Shift_JIS'))
+      res.end(iconvLite.encode('<div>日本語</div>', 'Shift_JIS'))
     }
 
     if (p === '/encoding/euc-jp') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/xml')
-      res.end(convert('<?xml version="1.0" encoding="EUC-JP"?><title>日本語</title>', 'EUC-JP'))
+      res.end(iconvLite.encode('<?xml version="1.0" encoding="EUC-JP"?><title>日本語</title>', 'EUC-JP'))
     }
 
     if (p === '/encoding/utf8') {
@@ -191,13 +191,13 @@ class TestServer {
     if (p === '/encoding/order1') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'charset=gbk; text/plain')
-      res.end(convert('中文', 'gbk'))
+      res.end(iconvLite.encode('中文', 'gbk'))
     }
 
     if (p === '/encoding/order2') {
       res.statusCode = 200
       res.setHeader('Content-Type', 'text/plain; charset=gbk; qs=1')
-      res.end(convert('中文', 'gbk'))
+      res.end(iconvLite.encode('中文', 'gbk'))
     }
 
     if (p === '/encoding/chunked') {
@@ -205,7 +205,7 @@ class TestServer {
       res.setHeader('Content-Type', 'text/html')
       res.setHeader('Transfer-Encoding', 'chunked')
       res.write('a'.repeat(10))
-      res.end(convert('<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS" />' +
+      res.end(iconvLite.encode('<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS" />' +
         '<div>日本語</div>', 'Shift_JIS'))
     }
 
@@ -214,7 +214,7 @@ class TestServer {
       res.setHeader('Content-Type', 'text/html')
       res.setHeader('Transfer-Encoding', 'chunked')
       res.write('a'.repeat(1200))
-      res.end(convert('中文', 'gbk'))
+      res.end(iconvLite.encode('中文', 'gbk'))
     }
 
     if (p === '/redirect/301') {
