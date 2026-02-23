@@ -30,6 +30,7 @@
     "abort-controller": "^3.0.0",
     "abortcontroller-polyfill": "~1.7.3",
     "form-data": "^4.0.0",
+    "iconv-lite": "^0.7.2",
     "nock": "^13.2.4",
     "parted": "^0.1.1",
     "string-to-arraybuffer": "^1.0.2",
@@ -39,6 +40,9 @@
     "minipass": "^7.0.3",
     "minipass-sized": "^2.0.0",
     "minizlib": "^3.0.1"
+  },
+  "optionalDependencies": {
+    "iconv-lite": "^0.7.2"
   },
   "repository": {
     "type": "git",
