@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.2](https://github.com/npm/minipass-fetch/compare/v5.0.1...v5.0.2) (2026-02-23)
+### Bug Fixes
+* [`2eba115`](https://github.com/npm/minipass-fetch/commit/2eba11567031e7f68db856076ed532785430ff74) use iconvLite directly for charset conversion (@wraithgar)
+### Dependencies
+* [`1a404dd`](https://github.com/npm/minipass-fetch/commit/1a404dd0bd0739445d04fe96e35912e12a26a684) add `iconv-lite@0.7.2`
+* [`420afb2`](https://github.com/npm/minipass-fetch/commit/420afb217fea7fafa3f154a5902a9248d2be1bb1) remove encoding
+
 ## [5.0.1](https://github.com/npm/minipass-fetch/compare/v5.0.0...v5.0.1) (2026-02-02)
 ### Bug Fixes
 * [`3eb015c`](https://github.com/npm/minipass-fetch/commit/3eb015cccfac4fdb6d60fde9717aba293e3897dc) [#180](https://github.com/npm/minipass-fetch/pull/180) use new minipass-sized correctly (#180) (@wraithgar)
