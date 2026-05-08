@@ -1,5 +1,15 @@
 # Changelog
 
+## [6.0.0](https://github.com/npm/minipass-fetch/compare/v5.0.2...v6.0.0) (2026-05-08)
+### ⚠️ BREAKING CHANGES
+* `minipass-fetch` now supports node `^22.22.2 || ^24.15.0 || >=26.0.0`
+* template-oss-apply
+### Features
+* [`a1bc223`](https://github.com/npm/minipass-fetch/commit/a1bc22377dfb778b97b051d890ccb8eb2f5a7112) [#189](https://github.com/npm/minipass-fetch/pull/189) bump to new node engine range (@owlstronaut)
+* [`637a6d6`](https://github.com/npm/minipass-fetch/commit/637a6d693064a51e5dcda451ae103289d221a07c) [#189](https://github.com/npm/minipass-fetch/pull/189) template-oss-apply (@owlstronaut)
+### Chores
+* [`9f22079`](https://github.com/npm/minipass-fetch/commit/9f2207915ccbd955b9f831339f1a3237e5b288a8) [#189](https://github.com/npm/minipass-fetch/pull/189) template-oss-apply (@owlstronaut)
+
 ## [5.0.2](https://github.com/npm/minipass-fetch/compare/v5.0.1...v5.0.2) (2026-02-23)
 ### Bug Fixes
 * [`2eba115`](https://github.com/npm/minipass-fetch/commit/2eba11567031e7f68db856076ed532785430ff74) use iconvLite directly for charset conversion (@wraithgar)
