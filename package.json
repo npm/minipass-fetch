@@ -31,7 +31,7 @@
     "abortcontroller-polyfill": "~1.7.3",
     "form-data": "^4.0.0",
     "iconv-lite": "^0.7.2",
-    "nock": "^13.2.4",
+    "nock": "^14.0.16",
     "parted": "^0.1.1",
     "string-to-arraybuffer": "^1.0.2",
     "tap": "^16.0.0"
