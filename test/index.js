@@ -554,19 +554,75 @@ t.test('decompress deflate raw response from old apache server', async t => {
 })
 
 t.test('decompress brotli response', async t => {
+  const options = { headers: { 'Accept-Encoding': 'br' } }
   // if the node core zlib doesn't export brotli functions, we'll end up
   // rejecting the request with an error that comes from minizlib, assert
   // that here
   if (typeof realZlib.BrotliCompress !== 'function') {
-    return t.rejects(fetch(`${base}brotli`), {
+    return t.rejects(fetch(`${base}brotli`, options), {
       message: 'Brotli is not supported in this version of Node.js',
     }, 'rejects the promise')
   }
 
-  const res = await fetch(`${base}brotli`)
+  const res = await fetch(`${base}brotli`, options)
   t.equal(res.headers.get('content-type'), 'text/plain')
   const result = await res.text()
   t.equal(result, 'hello world')
+})
+
+t.test('only decompress brotli when accepted by the request', async t => {
+  const zlib = require('minizlib')
+  let decoderCalls = 0
+  const mockedFetch = t.mock('../lib/index.js', {
+    minizlib: {
+      ...zlib,
+      BrotliDecompress: class extends zlib.BrotliDecompress {
+        constructor (...args) {
+          super(...args)
+          decoderCalls++
+        }
+      },
+    },
+  })
+  const input = Buffer.from('hello world')
+  const compressed = realZlib.brotliCompressSync(input)
+
+  for (const [acceptEncoding, accepted] of [
+    [undefined, false],
+    ['', false],
+    ['gzip', false],
+    ['br', true],
+    ['gzip, BR ; Q=0.500', true],
+    ['br;q=0', false],
+    ['br;q=0.000', false],
+    ['br;q=0.001', true],
+    ['*', true],
+    ['*;q=0', false],
+    ['*;q=0.5', true],
+    ['*, br;q=0', false],
+    ['br;q=0, *', false],
+    ['*;q=0, br;q=1', true],
+    ['br;q=invalid', false],
+    ['br;q=1.1', false],
+    ['br;q=1;extra=1', false],
+  ]) {
+    await t.test(acceptEncoding === undefined ? 'default' : acceptEncoding || 'empty', async t => {
+      const before = decoderCalls
+      const scope = nock('http://brotli.test', {
+        reqheaders: {
+          'accept-encoding': acceptEncoding === undefined ? 'gzip,deflate' : acceptEncoding,
+        },
+      })
+        .get('/')
+        .reply(200, compressed, { 'Content-Encoding': 'br' })
+      const headers = acceptEncoding === undefined ? {} : { 'Accept-Encoding': acceptEncoding }
+      const res = await mockedFetch('http://brotli.test/', { headers })
+
+      t.same(await res.buffer(), accepted ? input : compressed)
+      t.equal(decoderCalls - before, accepted ? 1 : 0, 'only constructs an accepted decoder')
+      scope.done()
+    })
+  }
 })
 
 t.test('handle no content response with brotli encoding', async t => {
