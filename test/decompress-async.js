@@ -68,7 +68,9 @@ t.test('decompress response when using async pipe', async t => {
         'Content-Encoding': 'br',
       })
 
-    const res = await fetch('http://a.b/brotli')
+    const res = await fetch('http://a.b/brotli', {
+      headers: { 'Accept-Encoding': 'br' },
+    })
     const result = await res.text()
     t.equal(result, input, 'brotli response processed correctly when using async pipe')
     t.end()
