@@ -1,5 +1,14 @@
 # Changelog
 
+## [6.0.1](https://github.com/npm/minipass-fetch/compare/v6.0.0...v6.0.1) (2026-11-10)
+### Bug Fixes
+* [`055750b`](https://github.com/npm/minipass-fetch/commit/055750b1f0ca50288b8157a5f5315571adbaab93) [#199](https://github.com/npm/minipass-fetch/pull/199) respect response decoding preferences (#199) (@nkolev92, @Copilot)
+### Chores
+* [`e123ee0`](https://github.com/npm/minipass-fetch/commit/e123ee0df7433862f4ce3501aa66cd0de2731208) [#193](https://github.com/npm/minipass-fetch/pull/193) bump @npmcli/eslint-config from 6.0.1 to 7.0.0 (#193) (@dependabot[bot])
+* [`a26cb8b`](https://github.com/npm/minipass-fetch/commit/a26cb8b55bfb0e40bc27a053b8e42bf555bed3af) [#186](https://github.com/npm/minipass-fetch/pull/186) bump @npmcli/eslint-config from 5.1.0 to 6.0.1 (#186) (@dependabot[bot])
+* [`4478714`](https://github.com/npm/minipass-fetch/commit/44787148c7c913b25ca305a2e5853991d4bc13d0) [#194](https://github.com/npm/minipass-fetch/pull/194) bump @npmcli/template-oss from 5.1.0 to 5.1.1 (#194) (@dependabot[bot], @npm-cli-bot)
+* [`71e2067`](https://github.com/npm/minipass-fetch/commit/71e2067f40b4530395547d8da1768c3cd0e214a9) [#192](https://github.com/npm/minipass-fetch/pull/192) postinstall for dependabot template-oss PR (@npm-cli-bot)
+
 ## [6.0.0](https://github.com/npm/minipass-fetch/compare/v5.0.2...v6.0.0) (2026-05-08)
 ### ⚠️ BREAKING CHANGES
 * `minipass-fetch` now supports node `^22.22.2 || ^24.15.0 || >=26.0.0`
