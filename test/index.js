@@ -206,13 +206,14 @@ t.test('redirect to different host strips headers', async (t) => {
     reqheaders: {
       authorization: 'totally-authed-request',
       cookie: 'fake-cookie',
+      'proxy-authorization': 'fake-proxy-auth',
     },
   })
     .get('/')
     .reply(301, null, { location: 'http://a.b' })
 
   const second = nock('http://a.b', {
-    badheaders: ['authorization', 'cookie'],
+    badheaders: ['authorization', 'cookie', 'proxy-authorization'],
   })
     .get('/')
     .reply(200)
@@ -221,6 +222,7 @@ t.test('redirect to different host strips headers', async (t) => {
     headers: {
       authorization: 'totally-authed-request',
       cookie: 'fake-cookie',
+      'proxy-authorization': 'fake-proxy-auth',
     },
   })
   await res.text() // drain the response stream
