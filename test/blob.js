@@ -69,3 +69,19 @@ t.test('expose the BUFFER symbol as read-only static property', t => {
   t.throws(() => Blob.BUFFER = 'fubber')
   t.end()
 })
+
+t.test('UTF-8 text decoding discards only the initial BOM', async t => {
+  for (const [text, expected] of [
+    ['\uFEFFtext', 'text'],
+    ['\uFEFF\uFEFFtext', '\uFEFFtext'],
+    ['text\uFEFFinside', 'text\uFEFFinside'],
+    ['\uFEFF', ''],
+  ]) {
+    const bytes = Buffer.from(text)
+    const b = new Blob([bytes])
+    t.equal(await b.text(), expected)
+    t.equal(b.size, bytes.length)
+    t.same(Buffer.from(await b.arrayBuffer()), bytes)
+    t.same(await b.stream().concat(), bytes)
+  }
+})

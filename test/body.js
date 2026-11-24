@@ -399,3 +399,54 @@ t.test('convert body', t => {
 
   t.end()
 })
+
+t.test('UTF-8 text decoding discards only the initial BOM', async t => {
+  const cases = [
+    [Buffer.from('\uFEFFtext'), 'text'],
+    [Buffer.from('\uFEFF\uFEFFtext'), '\uFEFFtext'],
+    [Buffer.from('text\uFEFFinside'), 'text\uFEFFinside'],
+    [Buffer.from('\uFEFF'), ''],
+    [Buffer.alloc(0), ''],
+    [Buffer.from([0xef, 0xbb]), '\uFFFD'],
+    [Buffer.from([0xff, 0xef, 0xbb, 0xbf]), '\uFFFD\uFEFF'],
+  ]
+  for (const [bytes, expected] of cases) {
+    t.equal(await new Body(bytes).text(), expected)
+  }
+})
+
+t.test('JSON decoding discards the initial UTF-8 BOM', async t => {
+  const bytes = Buffer.from('\uFEFF{"inner":"a\uFEFFb"}')
+  const b = new Body(bytes)
+  t.same(await b.json(), { inner: 'a\uFEFFb' })
+  t.equal(b.bodyUsed, true)
+  await t.rejects(b.text(), TypeError)
+})
+
+t.test('JSON decoding does not discard interior or repeated BOMs', async t => {
+  for (const text of ['\uFEFF\uFEFF{}', ' \uFEFF{}']) {
+    await t.rejects(new Body(text).json(), { type: 'invalid-json' })
+  }
+})
+
+t.test('UTF-8 BOM bytes survive raw body reads', async t => {
+  const bytes = Buffer.from('\uFEFFtext')
+  t.same(await new Body(bytes).buffer(), bytes)
+  t.same(Buffer.from(await new Body(bytes).arrayBuffer()), bytes)
+  const blob = await new Body(bytes).blob()
+  t.equal(blob.size, bytes.length)
+  t.same(Buffer.from(await blob.arrayBuffer()), bytes)
+  t.equal(await new Body(bytes).textConverted(), 'text')
+})
+
+t.test('UTF-8 BOM split across stream chunks', async t => {
+  const make = () => {
+    const stream = new Minipass()
+    stream.write(Buffer.from([0xef]))
+    stream.write(Buffer.from([0xbb]))
+    stream.end(Buffer.concat([Buffer.from([0xbf]), Buffer.from('{"ok":true}')]))
+    return new Body(stream)
+  }
+  t.equal(await make().text(), '{"ok":true}')
+  t.same(await make().json(), { ok: true })
+})
