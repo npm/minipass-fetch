@@ -26,7 +26,7 @@ const http = require('http')
 // use of url.parse here is intentional and for coverage purposes
 // eslint-disable-next-line node/no-deprecated-api
 const { parse: parseURL, URLSearchParams } = require('url')
-const nock = require('nock')
+const { default: nock } = require('nock')
 
 const vm = require('vm')
 const {
