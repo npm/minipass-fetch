@@ -2,7 +2,7 @@
 const t = require('tap')
 const fetch = require('../lib/index.js')
 const realZlib = require('zlib')
-const nock = require('nock')
+const { default: nock } = require('nock')
 
 // We additionally test decompression here using nock as it seems to recreate a
 // hard to diagnose condition: https://github.com/npm/minipass-fetch/issues/166
